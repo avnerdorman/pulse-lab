@@ -26,6 +26,9 @@ a {
     margin-left: 20px;
     padding:20px;
     background-color: tomato;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 
@@ -80,4 +83,118 @@ a {
     margin: 10px;
     padding: 10px;
     display: none;
+}
+
+#tracker-controls select,
+#tracker-controls input[type="number"],
+#tracker-controls input[type="text"],
+#tracker-controls input[type="range"] {
+    width: 100%;
+}
+
+.control-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.control-panel {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    border-radius: 6px;
+}
+
+.control-panel h3 {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+.control-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.control-grid {
+    display: grid;
+    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    align-items: center;
+}
+
+.preset-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+.preset-controls select {
+    min-width: 180px;
+}
+
+.inline-checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.panel-hint {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #222;
+}
+
+.panel-hint.small {
+    font-size: 0.8em;
+    opacity: 0.85;
+}
+
+.storage-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.storage-actions {
+    justify-content: space-between;
+}
+
+.storage-actions button {
+    flex: 1 1 auto;
+}
+
+.storage-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+#export-pattern-panel {
+    margin: 20px;
+}
+
+.export-pattern-content {
+    margin-top: 10px;
+}
+
+.export-pattern-output {
+    width: 100%;
+    min-height: 120px;
+    font-family: "Courier New", Courier, monospace;
+    white-space: pre;
+    padding: 10px;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+.export-pattern-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
 }
