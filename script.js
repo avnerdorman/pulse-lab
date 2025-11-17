@@ -18,6 +18,9 @@
     };
 
     const LABEL_WIDTH = 12;
+    const LOADED_BPM_DEFAULT = 80;
+    const LOADED_BPM_MIN = 72;
+    const LOADED_BPM_MAX = 84;
 
     const TRACK_TARGETS = {
         trackA: { matcher: /(kick|bass\s?drum|bd)/i, fallbackIndex: 0 },
@@ -29,13 +32,13 @@
         empty: {
             label: 'Empty',
             measureLength: 16,
-            bpm: 90,
+            bpm: 80,
             patterns: []
         },
         'two-three-alt': {
             label: '2–3 Alternation',
             measureLength: 16,
-            bpm: 96,
+            bpm: 78,
             patterns: [
                 { target: 'trackA', hits: [0, 2, 5, 7, 10, 12] },
                 { target: 'trackB', hits: [1, 4, 6, 9, 11, 14] }
@@ -44,7 +47,7 @@
         'cross-23': {
             label: 'Cross 2-vs-3',
             measureLength: 12,
-            bpm: 84,
+            bpm: 82,
             patterns: [
                 { target: 'trackA', hits: [0, 2, 4, 6, 8, 10] },
                 { target: 'trackB', hits: [0, 3, 6, 9] }
@@ -53,7 +56,7 @@
         'offset-23': {
             label: 'Offset 2-vs-3',
             measureLength: 16,
-            bpm: 96,
+            bpm: 84,
             patterns: [
                 { target: 'trackA', hits: [0, 2, 5, 7, 10, 12, 15] },
                 { target: 'trackB', hits: [1, 3, 6, 8, 11, 13] }
@@ -62,7 +65,7 @@
         'random-23': {
             label: 'Random 2/3',
             measureLength: 16,
-            bpm: 90,
+            bpm: 76,
             patterns: [
                 {
                     target: 'trackA',
@@ -249,13 +252,28 @@
 
     function buildTrackLines(length) {
         const rows = getTrackRows();
-        return rows.map(row => {
+        const activeRows = rows.filter(row => rowHasActivity(row, length));
+        return activeRows.map(row => {
             const labelCell = row.querySelector('.tracker-first-cell');
             const baseLabel = labelCell ? labelCell.textContent.trim() : `Track ${row.dataset.id || ''}`.trim();
             const label = `${baseLabel || 'Track'}:`;
             const cells = Array.from(row.querySelectorAll('.tracker-cell'));
             return padLabel(label) + buildRowPattern(cells, length);
         });
+    }
+
+    function rowHasActivity(row, length) {
+        if (!row) {
+            return false;
+        }
+        const cells = Array.from(row.querySelectorAll('.tracker-cell'));
+        const limit = length ? Math.min(length, cells.length) : cells.length;
+        for (let i = 0; i < limit; i++) {
+            if (cells[i] && cells[i].classList.contains('tracker-enabled')) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function buildRowPattern(cells, length) {
@@ -429,8 +447,10 @@
         if (params.bpm) {
             const bpm = parseInt(params.bpm, 10);
             if (Number.isFinite(bpm)) {
-                setBpm(bpm);
+                setBpm(normalizeLoadedBpm(bpm));
             }
+        } else if (params.rows) {
+            setBpm(LOADED_BPM_DEFAULT);
         }
         if (params.rows) {
             const patterns = decodeRowStates(params.rows).map(item => ({
@@ -451,6 +471,22 @@
         }
         bpmInput.value = value;
         bpmInput.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+
+    function normalizeLoadedBpm(value) {
+        if (!Number.isFinite(value)) {
+            return LOADED_BPM_DEFAULT;
+        }
+        if (value > 240) {
+            value = Math.round(value / 4);
+        }
+        if (value < LOADED_BPM_MIN) {
+            return LOADED_BPM_MIN;
+        }
+        if (value > LOADED_BPM_MAX) {
+            return LOADED_BPM_MAX;
+        }
+        return value;
     }
 
     function ensureMeasureBinding() {
@@ -501,7 +537,7 @@
             setMeasureLength(preset.measureLength);
         }
         if (preset.bpm) {
-            setBpm(preset.bpm);
+            setBpm(normalizeLoadedBpm(preset.bpm));
         }
         const length = preset.measureLength || getPatternLength();
         const patterns = preset.patterns.map(cfg => {

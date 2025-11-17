@@ -1,71 +1,133 @@
 @import url(https://fonts.googleapis.com/css?family=Merriweather:400,700);
 
-.merriweather      { 
-    font-family: 'Merriweather'; 
+body {
+    font-family: 'Merriweather', 'Helvetica Neue', Arial, sans-serif;
+    margin: 0;
+    background-color: #030711;
+    color: #f8fafc;
+    min-height: 100vh;
 }
 
-/*
-#controls {
-    font-family: 'Merriweather';
-    font-size: 10px;
-}*/
 a {
-    color: hotpink;
+    color: #38bdf8;
+}
+
+.page-header {
+    text-align: center;
+    padding: 20px 16px 0;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    letter-spacing: 0.02em;
+}
+
+.page-header p {
+    margin: 8px auto 0;
+    max-width: 640px;
+    color: #cbd5f5;
+    font-size: 0.95rem;
+}
+
+.app-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
 #tracker-container {
-    background-color: ghostwhite;
-    width: 100%;
-    padding: 20px;
-    background-color: #F4A360;
-    display: flex; 
-    flex-wrap:wrap;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
 }
 
 #tracker-controls {
-    margin-left: 20px;
-    padding:20px;
-    background-color: tomato;
+    padding: 20px;
+    background-color: rgba(15, 23, 42, 0.85);
+    border-radius: 16px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
     display: flex;
     flex-direction: column;
     gap: 20px;
 }
 
-
-#tracker-parent {
-    padding:20px;
-    flex-basis: auto;
-    background-color: gainsboro;
-    /*overflow-x: visible;*/
+#tracker-visual {
+    width: 100%;
+    background-color: rgba(15, 18, 30, 0.92);
+    border-radius: 16px;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
 }
 
+#tracker-parent {
+    padding: 12px;
+    background-color: rgba(4, 8, 15, 0.7);
+    border-radius: 12px;
+    overflow-x: auto;
+}
 
-.tracker-cell, .tracker-first-cell, .tracker-cell-header {
+#advanced-panels {
+    margin-top: 20px;
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.transport-panel {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+}
+
+.icon-btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+}
+
+.inline-panel {
+    margin: 0;
+}
+
+.transport-panel .icon-btn {
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    font-size: 0.82rem;
+}
+
+.tracker-cell,
+.tracker-first-cell,
+.tracker-cell-header {
     height: 20px;
     min-width: 20px;
-    border: black;
-    border-color: black;
-    background: #fff;
-    border-style: solid;
-    border-width: 1px;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    background: rgba(15, 23, 42, 0.7);
     font-size: 75%;
-    padding:2px;
-    /*background-color: pink;*/
+    padding: 2px;
+    color: #f8fafc;
 }
 
 .tracker-enabled {
-    background: orange;
+    background: #f97316;
+    color: #0f172a;
 }
 
 .tracker-current {
-    background: blueviolet;
+    background: #38bdf8;
+    color: #0f172a;
 }
 
 .pulse-step {
     height: 20px;
     min-width: 20px;
-    border: 1px solid black;
-    background: orange;
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    background: #38bdf8;
     padding: 2px;
     pointer-events: none;
     user-select: none;
@@ -79,10 +141,12 @@ a {
     position: fixed;
     top: 10px;
     left: 10px;
-    background-color: peru;
+    background-color: #f97316;
     margin: 10px;
     padding: 10px;
     display: none;
+    color: #0f172a;
+    border-radius: 6px;
 }
 
 #tracker-controls select,
@@ -99,15 +163,23 @@ a {
 }
 
 .control-panel {
-    background-color: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: rgba(15, 18, 30, 0.8);
+    border: 1px solid rgba(148, 163, 184, 0.2);
     padding: 16px;
-    border-radius: 6px;
+    border-radius: 10px;
+    box-shadow: inset 0 0 0 1px rgba(56, 189, 248, 0.05);
+}
+
+.primary-panel {
+    border-color: rgba(56, 189, 248, 0.45);
+    box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.25);
 }
 
 .control-panel h3 {
     margin-top: 0;
     margin-bottom: 12px;
+    font-size: 1rem;
+    color: #e2e8f0;
 }
 
 .control-row {
@@ -122,6 +194,16 @@ a {
     gap: 10px;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     align-items: center;
+}
+
+.control-grid.compact {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.control-grid .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
 .preset-controls {
@@ -143,12 +225,12 @@ a {
 
 .panel-hint {
     margin-top: 10px;
-    font-size: 0.9em;
-    color: #222;
+    font-size: 0.85em;
+    color: #cbd5f5;
 }
 
 .panel-hint.small {
-    font-size: 0.8em;
+    font-size: 0.78em;
     opacity: 0.85;
 }
 
@@ -174,8 +256,53 @@ a {
     justify-content: space-between;
 }
 
+.share-panel button,
+.control-row button,
+.preset-controls button,
+.export-pattern-actions button,
+.transport-panel .icon-btn {
+    background: linear-gradient(135deg, #38bdf8, #2563eb);
+    border: none;
+    color: #0b0f1a;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.share-panel button:hover,
+.control-row button:hover,
+.preset-controls button:hover,
+.export-pattern-actions button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
+}
+
+.control-row button {
+    flex: 1 1 30%;
+}
+
+button.full-width {
+    width: 100%;
+}
+
+.legacy-storage {
+    display: none;
+}
+
 #export-pattern-panel {
-    margin: 20px;
+    margin: 0;
+    background-color: rgba(15, 23, 42, 0.9);
+    border-radius: 12px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    padding: 12px 18px;
+    color: #f8fafc;
+}
+
+#export-pattern-panel summary {
+    cursor: pointer;
+    font-weight: 600;
 }
 
 .export-pattern-content {
@@ -189,7 +316,10 @@ a {
     white-space: pre;
     padding: 10px;
     box-sizing: border-box;
-    background-color: #fff;
+    background-color: rgba(2, 6, 23, 0.9);
+    color: #f8fafc;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 8px;
 }
 
 .export-pattern-actions {
@@ -197,4 +327,18 @@ a {
     display: flex;
     gap: 10px;
     flex-wrap: wrap;
+}
+
+@media (max-width: 960px) {
+    #tracker-container {
+        flex-direction: column;
+    }
+
+    #tracker-controls {
+        max-width: 100%;
+    }
+
+    #tracker-visual {
+        width: 100%;
+    }
 }

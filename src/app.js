@@ -14,6 +14,30 @@ const defaultTrack = require('./default-track');
 var buffers;
 var currentSampleData;
 var storage;
+const BPM_MULTIPLIER = 4;
+const BPM_DISPLAY_DEFAULT = 80;
+
+function normalizeDisplayBpm(value) {
+    let bpm = parseFloat(value);
+    if (!Number.isFinite(bpm) || bpm <= 0) {
+        bpm = BPM_DISPLAY_DEFAULT;
+    }
+    if (bpm > 240) {
+        bpm = Math.round(bpm / BPM_MULTIPLIER);
+    }
+    return bpm;
+}
+
+function normalizeSettingsForForm(settings) {
+    if (!settings) {
+        return {
+            bpm: BPM_DISPLAY_DEFAULT
+        };
+    }
+    const normalized = Object.assign({}, settings);
+    normalized.bpm = normalizeDisplayBpm(normalized.bpm);
+    return normalized;
+}
 
 function initializeSampleSet(ctx, dataUrl, track) {
 
@@ -44,8 +68,10 @@ window.onload = function () {
     let formValues = new getSetFormValues();
     let form = document.getElementById("trackerControls");
 
-    formValues.set(form, defaultTrack.settings);
-    getSetAudioOptions.setTrackerControls(defaultTrack.settings);
+    const normalizedDefaultSettings = normalizeSettingsForForm(defaultTrack.settings);
+    defaultTrack.settings = Object.assign({}, defaultTrack.settings, normalizedDefaultSettings);
+    formValues.set(form, normalizedDefaultSettings);
+    getSetAudioOptions.setTrackerControls(normalizedDefaultSettings);
 
     initializeSampleSet(ctx, defaultTrack.settings.sampleSet, defaultTrack);
     setupBaseEvents();
@@ -324,6 +350,7 @@ function tracksLocalStorage() {
 
             document.getElementById('filename').value = item;
             let track = JSON.parse(localStorage.getItem(item));
+            track.settings = normalizeSettingsForForm(track.settings);
 
             let formValues = new getSetFormValues();
             let form = document.getElementById("trackerControls");
