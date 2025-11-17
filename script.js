@@ -82,12 +82,30 @@
     initialize();
 
     function initialize() {
+        applyEmbedMode();
         setupExportPanel();
         setupTrackerListeners();
         setupPresetControls();
         setupShareControls();
         applyInitialParams();
         refreshExportText();
+    }
+
+    function applyEmbedMode() {
+        const params = state.initialParams || {};
+        const flag = params.embed;
+        if (!flag) {
+            return;
+        }
+        const isOn = flag === '1' || flag === 'true' || flag === 'yes';
+        if (isOn && document && document.body) {
+            document.body.classList.add('embedded');
+            // In embed mode, ensure the Export panel is open and visible
+            const exportPanel = document.getElementById('export-pattern-panel');
+            if (exportPanel) {
+                exportPanel.open = true;
+            }
+        }
     }
 
     function setupExportPanel() {

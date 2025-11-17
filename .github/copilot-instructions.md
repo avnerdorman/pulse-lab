@@ -74,6 +74,12 @@ Uses `load-sample-set` package to fetch JSON manifests from GitHub URLs (TR-909,
 - Clicking cells while playing schedules beat immediately if colId is ahead of playhead
 - `tracker-enabled` CSS class drives both visual state and beat data
 
+### Tempo Mapping (Important)
+- UI `bpm` is musical BPM (quarter-notes/minute). The sequencer advances one grid step per 16th note.
+- Therefore runtime BPM passed to the scheduler is `bpm * 4`. See `src/app.js` where `schedule.runSchedule(getSetAudioOptions.options.bpm * 4)` is invoked on Play and on BPM change.
+  - `simple-tracker.milliPerBeat(beats)` computes milliseconds per step: `1000 * 60 / beats`.
+  - Supplying `bpm * 4` ensures each grid step = 1/16 note at the displayed BPM.
+
 ### Pattern Presets (script.js)
 Presets defined in `PRESETS` object with:
 - `label` - display name
@@ -153,6 +159,11 @@ Edit `PRESETS` object in `script.js`:
 - Edit `tracker-table.js` - modify `getCells()` or `setPulseRow()`
 - Pulse row always uses `pulse-step` class and is always enabled
 - Header row shows 1-indexed beat numbers
+
+### Embed/Compact Mode
+- The main UI supports a compact layout for iframe/site embeds.
+- Append `?embed=1` to the URL; `script.js` adds an `embedded` class to `<body>`.
+- `main.css` defines `.embedded` rules (smaller paddings, font sizes, optional header hiding) to fit Google Sites-style embeds without changing functionality.
 
 ### Adding UI Features
 - Add to `script.js` (not bundled, easier to modify)

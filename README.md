@@ -1,36 +1,66 @@
-# drum-machine-javascript
+# Pulse Lab — Drum Machine & Pulse Tools
 
-A simple drum-machine written in javascript
+Browser-based drum machine and pulse exploration tools built on the Web Audio API. No Tone.js, no eval, and runs entirely in the browser (embed-friendly).
 
-It uses these great drum-samples: 
+Samples courtesy of https://github.com/oramics/sampled/
 
-https://github.com/oramics/sampled/
+## Features
+- Web Audio step sequencer with precise timing (WAAClock)
+- Always-on pulse row for visual metronome (silent, non-interactive)
+- Toussaint-inspired pattern presets (2–3 groupings, cross-rhythms)
+- Export pattern as text (copy or download)
+- URL sharing of kit, tempo, length, and row patterns
+- LocalStorage save/load (legacy panel hidden by default)
 
-You can try it out here: https://diversen.github.io/drum-machine-javascript/
+## Quick Start
 
-## Install
+```zsh
+git clone https://github.com/avnerdorman/pulse-lab.git
+cd drum-machine-javascript
+npm install
+npx browserify src/app.js -o bundle.js
+open index.html
+```
 
-    git clone https://github.com/diversen/drum-machine-javascript
+## Development
 
-Just clone this repo, and start a server inside it - og place it on a server.  
+Watch and rebuild `bundle.js` during development:
 
-## Dev install
+```zsh
+./watch.sh
+```
 
-Install deps: 
+One-time build:
 
-    npm install
+```zsh
+npx browserify src/app.js -o bundle.js
+```
 
-## Watch and build: 
+## Tempo Mapping
+- The UI `BPM` is musical tempo (quarter-notes per minute).
+- The sequencer advances one grid step per 16th note, so runtime BPM passed to the scheduler is `BPM × 4` (implemented in `src/app.js`).
 
-You will need watchify `sudo npm install -g watchify`
+## Embed in Google Sites (Compact Mode)
+Use compact styles via a URL param and an `embedded` CSS mode:
 
-    watchify src/main.js -t --debug -o 'bundle.js'
+```
+https://your-host/path/index.html?embed=1&len=16&bpm=80
+```
 
-Or (short form of above) 
+Compact mode:
+- Hides the large header
+- Reduces paddings and font sizes
+- Keeps all functionality (playback, presets, export)
 
-    npm run watch
+## Project Structure
+- `index.html` – Main app shell (controls, transport, tracker area)
+- `src/app.js` – Core audio + scheduler wiring (bundled to `bundle.js`)
+- `src/simple-tracker.js` – WAAClock timing + DOM highlight loop
+- `src/tracker-table.js` – Tracker grid (includes Pulse row above tracks)
+- `script.js` – UI enhancements (presets, export, URL sharing, embed flag)
+- `main.css` – UI styling (+ `.embedded` compact rules)
 
-## Licence
+## License
 
-MIT © [Dennis Iversen](https://github.com/diversen)
+MIT © [Dennis Iversen](https://github.com/diversen) and contributors
 

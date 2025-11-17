@@ -342,3 +342,25 @@ button.full-width {
         width: 100%;
     }
 }
+
+/* --- Compact Embed Mode -------------------------------------------------- */
+.embedded .page-header { display: none; }
+.embedded .app-wrapper { padding: 8px; }
+.embedded #tracker-container { gap: 12px; }
+.embedded #tracker-controls { padding: 12px; gap: 12px; }
+.embedded #tracker-visual { padding: 10px; gap: 10px; }
+.embedded #tracker-parent { padding: 8px; }
+.embedded .control-panel { padding: 10px; }
+.embedded .transport-panel .icon-btn { padding: 4px 8px; font-size: 0.8rem; }
+.embedded .preset-controls select,
+.embedded input[type="number"],
+.embedded input[type="range"],
+.embedded select,
+.embedded button { font-size: 0.85rem; }
+.embedded #export-pattern-panel { padding: 8px 12px; }
+.embedded .export-pattern-output { min-height: 180px; font-size: 0.9rem; }
+.embedded .control-grid.compact { grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.embedded .control-grid.compact .field { min-width: 0; }
+.embedded .control-grid.compact input,
+.embedded .control-grid.compact select,
+.embedded .control-grid.compact label { font-size: 0.9rem; }
