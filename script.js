@@ -19,8 +19,8 @@
 
     const LABEL_WIDTH = 12;
     const LOADED_BPM_DEFAULT = 80;
-    const LOADED_BPM_MIN = 72;
-    const LOADED_BPM_MAX = 84;
+    const LOADED_BPM_MIN = 20;
+    const LOADED_BPM_MAX = 240;
 
     const TRACK_TARGETS = {
         trackA: { matcher: /(kick|bass\s?drum|bd)/i, fallbackIndex: 0 },
@@ -476,9 +476,6 @@
     function normalizeLoadedBpm(value) {
         if (!Number.isFinite(value)) {
             return LOADED_BPM_DEFAULT;
-        }
-        if (value > 240) {
-            value = Math.round(value / 4);
         }
         if (value < LOADED_BPM_MIN) {
             return LOADED_BPM_MIN;
