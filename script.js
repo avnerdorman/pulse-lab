@@ -5,7 +5,9 @@
     const downloadBtn = document.getElementById('export-download-btn');
     const trackerParent = document.getElementById('tracker-parent');
     const bpmInput = document.getElementById('bpm');
+    const bpmValue = document.getElementById('bpmValue');
     const measureLengthInput = document.getElementById('measureLength');
+    const measureLengthPreset = document.getElementById('measureLengthPreset');
     const sampleSetSelect = document.getElementById('sampleSet');
     const presetSelect = document.getElementById('preset-select');
     const presetBtn = document.getElementById('apply-preset-btn');
@@ -173,15 +175,37 @@
         }
 
         if (bpmInput) {
-            bpmInput.addEventListener('input', handleTrackerMutation);
-            bpmInput.addEventListener('change', handleTrackerMutation);
+            const syncBpm = () => {
+                updateBpmDisplay();
+                handleTrackerMutation();
+            };
+            bpmInput.addEventListener('input', syncBpm);
+            bpmInput.addEventListener('change', syncBpm);
+            updateBpmDisplay();
         }
 
         if (measureLengthInput) {
             measureLengthInput.addEventListener('input', () => {
                 setTimeout(handleTrackerMutation, 0);
             });
-            measureLengthInput.addEventListener('change', handleTrackerMutation);
+            measureLengthInput.addEventListener('change', () => {
+                syncMeasureLengthPreset();
+                handleTrackerMutation();
+            });
+        }
+
+        if (measureLengthInput && measureLengthPreset) {
+            measureLengthPreset.addEventListener('change', () => {
+                const value = parseInt(measureLengthPreset.value, 10);
+                if (!Number.isFinite(value)) {
+                    return;
+                }
+                measureLengthInput.value = value;
+                measureLengthInput.dispatchEvent(new Event('input', { bubbles: true }));
+                measureLengthInput.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+
+            syncMeasureLengthPreset();
         }
     }
 
@@ -212,6 +236,24 @@
             refreshExportText();
         }
         tryApplyPendingPatterns();
+    }
+
+    function updateBpmDisplay() {
+        if (!bpmInput || !bpmValue) {
+            return;
+        }
+        const parsed = parseInt(bpmInput.value, 10);
+        const bpmText = Number.isFinite(parsed) ? parsed : '--';
+        bpmValue.textContent = `${bpmText} BPM`;
+    }
+
+    function syncMeasureLengthPreset() {
+        if (!measureLengthInput || !measureLengthPreset) {
+            return;
+        }
+        const value = measureLengthInput.value;
+        const presetValues = ['12', '16', '24', '32', '36'];
+        measureLengthPreset.value = presetValues.includes(String(value)) ? String(value) : '';
     }
 
     function refreshExportText() {

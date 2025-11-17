@@ -25,52 +25,46 @@
     <form class="pure-form control-form" id="trackerControls">
         <div id="tracker-container">
             <div id="tracker-controls">
-                <section class="control-panel primary-panel">
-                    <h3>Sound &amp; Pattern</h3>
-                    <div class="control-grid compact">
-                        <div class="field">
-                            <label for="sampleSet">Sample set</label>
-                            <select name="sampleSet" class="base" id="sampleSet">
-                                <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/CR-78/sampled.instrument.json">CR-78</option>
-                                <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/sampled.instrument.json">TR-909 Detroit</option>
-                                <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/SP/sampled.instrument.json">TR-909 SP</option>
-                                <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/MRK-2/sampled.instrument.json">MRK-2</option>
-                                <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-505/sampled.instrument.json">TR-505</option>
-                                <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/LM-2/sampled.instrument.json">LM-2</option>
-                                <option value="https://raw.githubusercontent.com/oramics/sampled/master/DRUMS/pearl-master-studio/sampled.instrument.json">Pearl Master Studio</option>
+                <div class="control-panel-row">
+                    <section class="control-panel primary-panel">
+                        <h3>Sound &amp; Pattern</h3>
+                        <div class="control-grid compact">
+                            <div class="field">
+                                <label for="sampleSet">Sample set</label>
+                                <select name="sampleSet" class="base" id="sampleSet">
+                                    <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/CR-78/sampled.instrument.json">CR-78</option>
+                                    <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/Detroit/sampled.instrument.json">TR-909 Detroit</option>
+                                    <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-909/SP/sampled.instrument.json">TR-909 SP</option>
+                                    <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/MRK-2/sampled.instrument.json">MRK-2</option>
+                                    <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/TR-505/sampled.instrument.json">TR-505</option>
+                                    <option value="https://raw.githubusercontent.com/oramics/sampled/master/DM/LM-2/sampled.instrument.json">LM-2</option>
+                                    <option value="https://raw.githubusercontent.com/oramics/sampled/master/DRUMS/pearl-master-studio/sampled.instrument.json">Pearl Master Studio</option>
+                                </select>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="control-panel">
+                        <h3>Presets</h3>
+                        <div class="preset-controls">
+                            <select id="preset-select">
+                                <option value="empty">Empty</option>
+                                <option value="two-three-alt">2–3 Alternation</option>
+                                <option value="cross-23">Cross 2-vs-3</option>
+                                <option value="offset-23">Offset 2-vs-3</option>
+                                <option value="random-23">Random 2/3</option>
                             </select>
+                            <button type="button" id="apply-preset-btn">Load Preset</button>
                         </div>
-                        <div class="field">
-                            <label for="measureLength">Measure length</label>
-                            <input class="base" name="measureLength" id="measureLength" value="16" type="number" min="1" max="64">
-                        </div>
-                        <div class="field">
-                            <label for="bpm">Tempo (BPM)</label>
-                            <input class="base" name="bpm" id="bpm" type="range" max="240" min="20" step="1" value="80">
-                        </div>
-                    </div>
-                </section>
+                        <p class="panel-hint small">Load Toussaint-inspired groupings and adapt them to any kit.</p>
+                    </section>
 
-                <section class="control-panel">
-                    <h3>Presets</h3>
-                    <div class="preset-controls">
-                        <select id="preset-select">
-                            <option value="empty">Empty</option>
-                            <option value="two-three-alt">2–3 Alternation</option>
-                            <option value="cross-23">Cross 2-vs-3</option>
-                            <option value="offset-23">Offset 2-vs-3</option>
-                            <option value="random-23">Random 2/3</option>
-                        </select>
-                        <button type="button" id="apply-preset-btn">Load Preset</button>
-                    </div>
-                    <p class="panel-hint small">Load Toussaint-inspired groupings and adapt them to any kit.</p>
-                </section>
-
-                <section class="control-panel share-panel">
-                    <h3>Share</h3>
-                    <p class="panel-hint small">Copy a URL with the current tempo, length, kit, and pattern.</p>
-                    <button type="button" id="share-link-btn" class="full-width">Copy Share Link</button>
-                </section>
+                    <section class="control-panel share-panel">
+                        <h3>Share</h3>
+                        <p class="panel-hint small">Copy a URL with the current tempo, length, kit, and pattern.</p>
+                        <button type="button" id="share-link-btn" class="full-width">Copy Share Link</button>
+                    </section>
+                </div>
 
                 <section class="control-panel legacy-storage" aria-hidden="true">
                     <div class="pure-form storage-form">
@@ -92,6 +86,29 @@
                     <button id="play" type="button" class="icon-btn">Play</button>
                     <button id="pause" type="button" class="icon-btn">Pause</button>
                     <button id="stop" type="button" class="icon-btn">Stop</button>
+                    <div class="transport-inline-controls">
+                        <div class="tempo-control">
+                            <label for="bpm">Tempo</label>
+                            <div class="tempo-slider">
+                                <input class="base" name="bpm" id="bpm" type="range" max="240" min="20" step="1" value="80">
+                                <span id="bpmValue" aria-live="polite">80 BPM</span>
+                            </div>
+                        </div>
+                        <div class="measure-length-controls">
+                            <label for="measureLength">Measure length</label>
+                            <div class="measure-length-inputs">
+                                <select id="measureLengthPreset" aria-label="Quick measure length select">
+                                    <option value="">Preset</option>
+                                    <option value="12">12</option>
+                                    <option value="16">16</option>
+                                    <option value="24">24</option>
+                                    <option value="32">32</option>
+                                    <option value="36">36</option>
+                                </select>
+                                <input class="base" name="measureLength" id="measureLength" value="16" type="number" min="8" max="36" step="1">
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <!-- Pulse row markup is injected dynamically before drum tracks -->
                 <div id="tracker-parent"></div>
@@ -111,57 +128,85 @@
         <div id="advanced-panels">
             <section class="control-panel">
                 <h3>Detune &amp; Envelope</h3>
-                <div class="control-grid compact">
-                    <label for="detune">Detune / Tune</label>
-                    <input class="base" name="detune" id="detune" type="range" max="1200" min="-1200" step="10" value="0">
+                <div class="control-grid slider-grid">
+                    <div class="field">
+                        <label for="detune">Detune / Tune</label>
+                        <input class="base" name="detune" id="detune" type="range" max="1200" min="-1200" step="10" value="0">
+                    </div>
 
-                    <label class="inline-checkbox">
-                        <input class="base" name="gainEnabled" type="checkbox" id="gainEnabled" value="gain">
-                        Enable gain envelope
-                    </label>
+                    <div class="field checkbox-field">
+                        <label class="inline-checkbox" for="gainEnabled">
+                            <input class="base" name="gainEnabled" type="checkbox" id="gainEnabled" value="gain">
+                            Enable gain envelope
+                        </label>
+                    </div>
 
-                    <label for="attackAmp">Attack Amp</label>
-                    <input class="base" name="attackAmp" id="attackAmp" type="range" max="1" min="0" step="0.1" value="0.5">
+                    <div class="field">
+                        <label for="attackAmp">Attack Amp</label>
+                        <input class="base" name="attackAmp" id="attackAmp" type="range" max="1" min="0" step="0.1" value="0.5">
+                    </div>
 
-                    <label for="sustainAmp">Sustain Amp</label>
-                    <input class="base" name="sustainAmp" id="sustainAmp" type="range" max="1" min="0" step="0.1" value="0.9">
+                    <div class="field">
+                        <label for="sustainAmp">Sustain Amp</label>
+                        <input class="base" name="sustainAmp" id="sustainAmp" type="range" max="1" min="0" step="0.1" value="0.9">
+                    </div>
 
-                    <label for="decayAmp">Decay Amp</label>
-                    <input class="base" name="decayAmp" id="decayAmp" type="range" max="1" min="0" step="0.1" value="0.9">
+                    <div class="field">
+                        <label for="decayAmp">Decay Amp</label>
+                        <input class="base" name="decayAmp" id="decayAmp" type="range" max="1" min="0" step="0.1" value="0.9">
+                    </div>
 
-                    <label for="releaseAmp">Release Amp</label>
-                    <input class="base" name="releaseAmp" id="releaseAmp" type="range" max="1" min="0" step="0.1" value="0.9">
+                    <div class="field">
+                        <label for="releaseAmp">Release Amp</label>
+                        <input class="base" name="releaseAmp" id="releaseAmp" type="range" max="1" min="0" step="0.1" value="0.9">
+                    </div>
 
-                    <label for="attackTime">Attack Time</label>
-                    <input class="base" name="attackTime" id="attackTime" type="range" max="1" min="0" step="0.01" value="0.08">
+                    <div class="field">
+                        <label for="attackTime">Attack Time</label>
+                        <input class="base" name="attackTime" id="attackTime" type="range" max="1" min="0" step="0.01" value="0.08">
+                    </div>
 
-                    <label for="decayTime">Decay Time</label>
-                    <input class="base" name="decayTime" id="decayTime" type="range" max="1" min="0" step="0.01" value="0.08">
+                    <div class="field">
+                        <label for="decayTime">Decay Time</label>
+                        <input class="base" name="decayTime" id="decayTime" type="range" max="1" min="0" step="0.01" value="0.08">
+                    </div>
 
-                    <label for="sustainTime">Sustain Time</label>
-                    <input class="base" name="sustainTime" id="sustainTime" type="range" max="2" min="0" step="0.1" value="0.1">
+                    <div class="field">
+                        <label for="sustainTime">Sustain Time</label>
+                        <input class="base" name="sustainTime" id="sustainTime" type="range" max="2" min="0" step="0.1" value="0.1">
+                    </div>
 
-                    <label for="releaseTime">Release Time</label>
-                    <input class="base" name="releaseTime" id="releaseTime" type="range" max="5" min="0" step="0.1" value="2">
+                    <div class="field">
+                        <label for="releaseTime">Release Time</label>
+                        <input class="base" name="releaseTime" id="releaseTime" type="range" max="5" min="0" step="0.1" value="2">
+                    </div>
 
-                    <label for="adsrInterval">ADSR Interval</label>
-                    <input class="base" name="adsrInterval" id="adsrInterval" value="0.1" type="number" min="0" step="0.01">
+                    <div class="field">
+                        <label for="adsrInterval">ADSR Interval</label>
+                        <input class="base" name="adsrInterval" id="adsrInterval" value="0.1" type="number" min="0" step="0.01">
+                    </div>
                 </div>
             </section>
 
             <section class="control-panel">
                 <h3>Delay &amp; Filter</h3>
-                <div class="control-grid compact">
-                    <label class="inline-checkbox">
-                        <input class="base" name="delayEnabled" type="checkbox" id="delayEnabled" value="delay">
-                        Enable delay
-                    </label>
+                <div class="control-grid slider-grid">
+                    <div class="field checkbox-field">
+                        <label class="inline-checkbox" for="delayEnabled">
+                            <input class="base" name="delayEnabled" type="checkbox" id="delayEnabled" value="delay">
+                            Enable delay
+                        </label>
+                    </div>
 
-                    <label for="delay">Delay</label>
-                    <input class="base" name="delay" id="delay" type="range" max="1" min="0" step="0.01" value="0.01">
+                    <div class="field">
+                        <label for="delay">Delay</label>
+                        <input class="base" name="delay" id="delay" type="range" max="1" min="0" step="0.01" value="0.01">
+                    </div>
 
-                    <label for="filter">Filter</label>
-                    <input class="base" name="filter" id="filter" type="range" max="10000" min="20" step="0.1" value="1000">
+                    <div class="field">
+                        <label for="filter">Filter</label>
+                        <input class="base" name="filter" id="filter" type="range" max="10000" min="20" step="0.1" value="1000">
+                    </div>
                 </div>
             </section>
         </div>

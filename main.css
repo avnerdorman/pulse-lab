@@ -84,6 +84,8 @@ a {
     display: flex;
     gap: 8px;
     justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .icon-btn {
@@ -99,6 +101,75 @@ a {
     flex: 0 0 auto;
     padding: 6px 10px;
     font-size: 0.82rem;
+}
+
+.transport-inline-controls {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-left: auto;
+    flex-wrap: wrap;
+}
+
+.tempo-control {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 180px;
+}
+
+.tempo-slider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.tempo-slider input[type="range"] {
+    width: 140px;
+}
+
+.tempo-slider span {
+    font-size: 0.85rem;
+    color: #cbd5f5;
+    min-width: 60px;
+}
+
+.measure-length-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+}
+
+.measure-length-inputs {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.measure-length-inputs select,
+.measure-length-inputs input {
+    width: 72px;
+    min-width: 0;
+}
+
+.measure-length-inputs select {
+    background-color: rgba(15, 18, 30, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    color: #f8fafc;
+    border-radius: 6px;
+    height: 28px;
+}
+
+.measure-length-inputs input {
+    text-align: center;
+}
+
+@media (max-width: 640px) {
+    .measure-length-controls {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
 }
 
 .tracker-cell,
@@ -156,6 +227,23 @@ a {
     width: 100%;
 }
 
+.control-panel-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: nowrap;
+}
+
+.control-panel-row > .control-panel {
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+@media (max-width: 1000px) {
+    .control-panel-row {
+        flex-wrap: wrap;
+    }
+}
+
 .control-form {
     display: flex;
     flex-direction: column;
@@ -196,14 +284,78 @@ a {
     align-items: center;
 }
 
-.control-grid.compact {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-}
-
 .control-grid .field {
     display: flex;
     flex-direction: column;
     gap: 6px;
+}
+
+.slider-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.slider-grid .field input[type="range"],
+.slider-grid .field input[type="number"] {
+    width: 100%;
+}
+
+.slider-grid .checkbox-field {
+    flex-direction: row;
+    align-items: center;
+}
+
+.slider-grid .checkbox-field .inline-checkbox {
+    width: 100%;
+}
+
+/* Compact layout - single row with inline labels */
+.control-grid.compact {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    gap: 12px;
+    align-items: flex-end;
+}
+
+.control-grid.compact .field {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.control-grid.compact .field label {
+    margin: 0;
+    flex-shrink: 0;
+}
+
+.control-grid.compact .field select,
+.control-grid.compact .field input[type="number"] {
+    width: auto;
+    min-width: 80px;
+}
+
+.control-grid.compact .field input[type="range"] {
+    width: 200px;
+}
+
+#tracker-controls .control-grid.compact .field select,
+#tracker-controls .control-grid.compact .field input[type="number"],
+#tracker-controls .control-grid.compact .field input[type="text"],
+#tracker-controls .control-grid.compact .field input[type="range"] {
+    width: auto;
+}
+
+#tracker-controls .control-grid.compact .field input[type="range"] {
+    width: 200px;
+}
+
+/* Allow wrapping on small screens */
+@media (max-width: 900px) {
+    .control-grid.compact {
+        flex-wrap: wrap;
+    }
 }
 
 .preset-controls {
