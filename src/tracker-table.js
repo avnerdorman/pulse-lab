@@ -15,11 +15,18 @@ function trackerTable() {
     this.setRows = function (numRows, numCols, data) {
 
         this.setHeader(numCols, data);
+        this.setPulseRow(numCols);
         for (let rowID = 0; rowID < numRows; rowID++) {
             this.str += `<tr class="tracker-row" data-id="${rowID}">`;
             this.str += this.getCells(rowID, numCols, data);
             this.str += `</tr>`;
         }
+    };
+
+    this.setPulseRow = function (numCols) {
+        this.str += `<tr class="tracker-row pulse-row">`;
+        this.str += this.getPulseCells(numCols);
+        this.str += `</tr>`;
     };
 
     this.getFirstCell = function (rowID, data) {
@@ -51,6 +58,14 @@ function trackerTable() {
                 str += c + 1;
             }
             str += `</td>`;
+        }
+        return str;
+    };
+
+    this.getPulseCells = function (numCols) {
+        let str = `<td class="tracker-first-cell pulse-label">Pulse</td>`;
+        for (let c = 0; c < numCols; c++) {
+            str += `<td class="pulse-step tracker-enabled" data-col-id="${c}" aria-hidden="true"></td>`;
         }
         return str;
     };

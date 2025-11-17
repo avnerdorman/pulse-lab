@@ -58,6 +58,20 @@ a {
     background: blueviolet;
 }
 
+.pulse-step {
+    height: 20px;
+    min-width: 20px;
+    border: 1px solid black;
+    background: orange;
+    padding: 2px;
+    pointer-events: none;
+    user-select: none;
+}
+
+.pulse-label {
+    font-weight: bold;
+}
+
 #app-message {
     position: fixed;
     top: 10px;

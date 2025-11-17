@@ -58,7 +58,7 @@ function tracker(ctx, scheduleAudioBeat) {
      */
     this.getTrackerRowValues = function (colId) {
         let values = [];
-        let selector = `[data-col-id="${colId}"]`;
+        let selector = `.tracker-cell[data-col-id="${colId}"]`;
 
         let elems = document.querySelectorAll(selector);
         elems.forEach((el) => {
