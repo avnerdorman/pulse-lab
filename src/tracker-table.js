@@ -84,6 +84,15 @@ function trackerTable() {
         str += `<button type="button" class="track-action-btn" data-row-id="${rowID}" data-action="shift-right" aria-label="Shift ${label} right">→</button>`;
         str += `<button type="button" class="track-action-btn" data-row-id="${rowID}" data-action="mute" aria-label="Mute ${label}">⨯</button>`;
         str += `<button type="button" class="track-action-btn" data-row-id="${rowID}" data-action="options" aria-label="${label} options">⋮</button>`;
+        // Compact options menu (hidden by default, toggled by Options button)
+        str += `<div class="track-options-menu" data-row-id="${rowID}" role="menu" aria-label="${label} options">`;
+        str += `<button type="button" class="track-options-item" data-row-id="${rowID}" data-every="2" role="menuitem">Every 2</button>`;
+        str += `<button type="button" class="track-options-item" data-row-id="${rowID}" data-every="3" role="menuitem">Every 3</button>`;
+        str += `<button type="button" class="track-options-item" data-row-id="${rowID}" data-every="4" role="menuitem">Every 4</button>`;
+        str += `<button type="button" class="track-options-item" data-row-id="${rowID}" data-every="5" role="menuitem">Every 5</button>`;
+        str += `<hr class="track-options-sep">`;
+        str += `<button type="button" class="track-options-item" data-row-id="${rowID}" data-clear="1" role="menuitem">Clear row</button>`;
+        str += `</div>`;
         str += `</div>`;
         str += `</td>`;
         return str;

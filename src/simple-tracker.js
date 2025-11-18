@@ -62,6 +62,14 @@ function tracker(ctx, scheduleAudioBeat) {
 
         let elems = document.querySelectorAll(selector);
         elems.forEach((el) => {
+            const row = el.closest('.tracker-row');
+            if (row && row.classList.contains('row-muted')) {
+                // Treat as disabled when muted
+                let val = Object.assign({}, el.dataset);
+                val.enabled = false;
+                values.push(val);
+                return;
+            }
             let val = Object.assign({}, el.dataset);
             val.enabled = el.classList.contains('tracker-enabled');
             values.push(val);
@@ -162,8 +170,13 @@ function tracker(ctx, scheduleAudioBeat) {
         let values = [];
         let elems = document.querySelectorAll('.tracker-cell');
         elems.forEach(function (e) {
+            const row = e.closest('.tracker-row');
             let val = Object.assign({}, e.dataset);
-            val.enabled = hasClass(e, "tracker-enabled");
+            if (row && row.classList.contains('row-muted')) {
+                val.enabled = false;
+            } else {
+                val.enabled = hasClass(e, "tracker-enabled");
+            }
             values.push(val);
         });
         return values;

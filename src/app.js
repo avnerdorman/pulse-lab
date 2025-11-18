@@ -196,6 +196,29 @@ function setupBaseEvents() {
         schedule = new simpleTracker(ctx, scheduleAudioBeat);
     });
 
+    // Spacebar to toggle play/stop
+    document.addEventListener('keydown', (e) => {
+        if (e.code !== 'Space' && e.key !== ' ') return;
+        const target = e.target;
+        if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable)) {
+            return; // don't hijack typing
+        }
+        e.preventDefault();
+        if (schedule.running) {
+            // Stop
+            schedule.stop();
+            schedule = new simpleTracker(ctx, scheduleAudioBeat);
+        } else {
+            // Play
+            ctx.resume && ctx.resume();
+            let storage = new tracksLocalStorage();
+            let track = storage.getTrack();
+            schedule.measureLength = track.settings.measureLength;
+            schedule.stop();
+            schedule.runSchedule(getSetAudioOptions.options.bpm * 4);
+        }
+    });
+
     document.getElementById('bpm').addEventListener('change', function (e) {
         getSetAudioOptions.setTrackerControls();
         if (schedule.running) {

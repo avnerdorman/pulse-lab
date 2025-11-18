@@ -146,6 +146,36 @@
                 }
             });
 
+            // Handle click on compact options menu items (every N)
+            trackerParent.addEventListener('click', event => {
+                const item = event.target && event.target.closest('.track-options-item');
+                if (item) {
+                    const rowId = item.dataset.rowId;
+                    if (item.dataset.clear) {
+                        clearRowById(rowId);
+                    } else {
+                        const n = parseInt(item.dataset.every, 10);
+                        if (Number.isFinite(n)) {
+                            applyEveryN(rowId, n);
+                        }
+                    }
+                    const actionCell = item.closest('.tracker-action-cell');
+                    if (actionCell) actionCell.classList.remove('show-options');
+                    event.stopPropagation();
+                    return;
+                }
+            });
+
+            // Click outside to close any open options menus
+            document.addEventListener('click', (e) => {
+                const open = document.querySelectorAll('.tracker-action-cell.show-options');
+                open.forEach(cell => {
+                    if (!cell.contains(e.target)) {
+                        cell.classList.remove('show-options');
+                    }
+                });
+            });
+
             if (window.MutationObserver) {
                 const observer = new MutationObserver(() => {
                     handleTrackerMutation();
@@ -800,6 +830,20 @@
             shiftRow(rowId, 'left');
         } else if (action === 'shift-right') {
             shiftRow(rowId, 'right');
+            } else if (action === 'mute') {
+                const row = document.querySelector(`#tracker-table .tracker-row[data-id="${rowId}"]`);
+                if (row) {
+                    row.classList.toggle('row-muted');
+                }
+        } else if (action === 'options') {
+            const actionCell = document.querySelector(`.tracker-action-cell[data-row-id="${rowId}"]`);
+            if (actionCell) {
+                actionCell.classList.toggle('show-options');
+                const select = actionCell.querySelector('.track-options-select');
+                if (select) {
+                    select.focus();
+                }
+            }
         }
     }
 
@@ -832,6 +876,45 @@
                 {
                     rowId: String(rowId),
                     pattern: patternString
+                }
+            ]
+        };
+        const applied = applyPatternSetNow(patternSet);
+        if (!applied) {
+            queuePatternSet(patternSet);
+        }
+    }
+
+    function applyEveryN(rowId, n) {
+        const length = getPatternLength() || 16;
+        if (!n || n < 1) return;
+        const pattern = Array.from({ length }, (_, i) => (i % n === 0 ? 'X' : '.')).join('');
+        const patternSet = {
+            length,
+            clearAll: false,
+            patterns: [
+                {
+                    rowId: String(rowId),
+                    pattern
+                }
+            ]
+        };
+        const applied = applyPatternSetNow(patternSet);
+        if (!applied) {
+            queuePatternSet(patternSet);
+        }
+    }
+
+    function clearRowById(rowId) {
+        const length = getPatternLength() || 16;
+        const pattern = new Array(length).fill('.').join('');
+        const patternSet = {
+            length,
+            clearAll: false,
+            patterns: [
+                {
+                    rowId: String(rowId),
+                    pattern
                 }
             ]
         };

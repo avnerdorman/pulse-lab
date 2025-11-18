@@ -1079,6 +1079,29 @@ function setupBaseEvents() {
         schedule = new simpleTracker(ctx, scheduleAudioBeat);
     });
 
+    // Spacebar to toggle play/stop
+    document.addEventListener('keydown', (e) => {
+        if (e.code !== 'Space' && e.key !== ' ') return;
+        const target = e.target;
+        if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT' || target.isContentEditable)) {
+            return; // don't hijack typing
+        }
+        e.preventDefault();
+        if (schedule.running) {
+            // Stop
+            schedule.stop();
+            schedule = new simpleTracker(ctx, scheduleAudioBeat);
+        } else {
+            // Play
+            ctx.resume && ctx.resume();
+            let storage = new tracksLocalStorage();
+            let track = storage.getTrack();
+            schedule.measureLength = track.settings.measureLength;
+            schedule.stop();
+            schedule.runSchedule(getSetAudioOptions.options.bpm * 4);
+        }
+    });
+
     document.getElementById('bpm').addEventListener('change', function (e) {
         getSetAudioOptions.setTrackerControls();
         if (schedule.running) {
@@ -1861,6 +1884,14 @@ function tracker(ctx, scheduleAudioBeat) {
 
         let elems = document.querySelectorAll(selector);
         elems.forEach((el) => {
+            const row = el.closest('.tracker-row');
+            if (row && row.classList.contains('row-muted')) {
+                // Treat as disabled when muted
+                let val = Object.assign({}, el.dataset);
+                val.enabled = false;
+                values.push(val);
+                return;
+            }
             let val = Object.assign({}, el.dataset);
             val.enabled = el.classList.contains('tracker-enabled');
             values.push(val);
@@ -1961,8 +1992,13 @@ function tracker(ctx, scheduleAudioBeat) {
         let values = [];
         let elems = document.querySelectorAll('.tracker-cell');
         elems.forEach(function (e) {
+            const row = e.closest('.tracker-row');
             let val = Object.assign({}, e.dataset);
-            val.enabled = hasClass(e, "tracker-enabled");
+            if (row && row.classList.contains('row-muted')) {
+                val.enabled = false;
+            } else {
+                val.enabled = hasClass(e, "tracker-enabled");
+            }
             values.push(val);
         });
         return values;
@@ -2100,6 +2136,15 @@ function trackerTable() {
         str += `<button type="button" class="track-action-btn" data-row-id="${rowID}" data-action="shift-right" aria-label="Shift ${label} right">→</button>`;
         str += `<button type="button" class="track-action-btn" data-row-id="${rowID}" data-action="mute" aria-label="Mute ${label}">⨯</button>`;
         str += `<button type="button" class="track-action-btn" data-row-id="${rowID}" data-action="options" aria-label="${label} options">⋮</button>`;
+        // Compact options menu (hidden by default, toggled by Options button)
+        str += `<div class="track-options-menu" data-row-id="${rowID}" role="menu" aria-label="${label} options">`;
+        str += `<button type="button" class="track-options-item" data-row-id="${rowID}" data-every="2" role="menuitem">Every 2</button>`;
+        str += `<button type="button" class="track-options-item" data-row-id="${rowID}" data-every="3" role="menuitem">Every 3</button>`;
+        str += `<button type="button" class="track-options-item" data-row-id="${rowID}" data-every="4" role="menuitem">Every 4</button>`;
+        str += `<button type="button" class="track-options-item" data-row-id="${rowID}" data-every="5" role="menuitem">Every 5</button>`;
+        str += `<hr class="track-options-sep">`;
+        str += `<button type="button" class="track-options-item" data-row-id="${rowID}" data-clear="1" role="menuitem">Clear row</button>`;
+        str += `</div>`;
         str += `</div>`;
         str += `</td>`;
         return str;

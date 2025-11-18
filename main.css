@@ -78,6 +78,47 @@ a {
     table-layout: auto;
 }
 
+/* Track options popover menu */
+.tracker-action-cell { position: relative; }
+.track-options-menu {
+    display: none;
+    position: absolute;
+    top: 28px;
+    right: 4px;
+    background-color: rgba(15, 18, 30, 0.98);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    color: #f8fafc;
+    border-radius: 6px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    z-index: 5;
+    padding: 4px;
+    min-width: 120px;
+}
+.track-options-sep {
+    border: 0;
+    border-top: 1px solid rgba(148, 163, 184, 0.25);
+    margin: 4px 0;
+}
+.track-options-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    color: inherit;
+    border: none;
+    padding: 6px 8px;
+    cursor: pointer;
+}
+.track-options-item:hover { background: rgba(56, 189, 248, 0.15); }
+.tracker-action-cell.show-options .track-options-menu { display: block; }
+
+/* Muted row visual */
+.tracker-row.row-muted .tracker-first-cell,
+.tracker-row.row-muted .tracker-cell,
+.tracker-row.row-muted .tracker-action-cell {
+    opacity: 0.45;
+}
+
 #advanced-panels {
     margin-top: 20px;
     display: grid;
