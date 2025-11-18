@@ -133,6 +133,14 @@
     function setupTrackerListeners() {
         if (trackerParent) {
             trackerParent.addEventListener('click', event => {
+                const actionBtn = event.target && event.target.closest('.track-action-btn');
+                if (actionBtn) {
+                    const rowId = actionBtn.dataset.rowId;
+                    const action = actionBtn.dataset.action;
+                    handleTrackAction(action, rowId);
+                    event.stopPropagation();
+                    return;
+                }
                 if (event.target && event.target.classList.contains('tracker-cell')) {
                     setTimeout(() => handleTrackerMutation(), 0);
                 }
@@ -775,3 +783,40 @@
         }
     }
 })();
+    function handleTrackAction(action, rowId) {
+        if (!action || rowId === undefined) {
+            return;
+        }
+        if (action === 'shift-left') {
+            shiftRow(rowId, 'left');
+        } else if (action === 'shift-right') {
+            shiftRow(rowId, 'right');
+        }
+    }
+
+    function shiftRow(rowId, direction) {
+        const row = document.querySelector(`#tracker-table .tracker-row[data-id="${rowId}"]`);
+        if (!row) {
+            return;
+        }
+        const cells = Array.from(row.querySelectorAll('.tracker-cell'));
+        if (!cells.length) {
+            return;
+        }
+        const length = Math.min(getPatternLength() || cells.length, cells.length);
+        const pattern = cells.slice(0, length).map(cell => cell.classList.contains('tracker-enabled'));
+        if (!pattern.length) {
+            return;
+        }
+        if (direction === 'left') {
+            const first = pattern.shift();
+            pattern.push(first);
+        } else if (direction === 'right') {
+            const last = pattern.pop();
+            pattern.unshift(last);
+        }
+        for (let i = 0; i < length; i++) {
+            cells[i].classList.toggle('tracker-enabled', !!pattern[i]);
+        }
+        refreshExportText();
+    }

@@ -33,10 +33,17 @@ function trackerTable() {
         var str = '';
         
         str += `<td class="tracker-first-cell" data-row-id="${rowID}">`;
-        if (data.title) { 
-            str += data.title[rowID];
+        if (rowID === 'header') {
+            if (data.title) {
+                str += data.title[rowID] || '';
+            }
+            str += `</td>`;
+            return str;
         }
-        
+
+        const fallbackLabel = typeof rowID === 'number' ? `Track ${rowID + 1}` : '';
+        const label = data.title && data.title[rowID] ? data.title[rowID] : fallbackLabel;
+        str += `<div class="track-label">${label}</div>`;
         str += `</td>`;
         return str;
     };
@@ -59,6 +66,26 @@ function trackerTable() {
             }
             str += `</td>`;
         }
+
+        if (rowID === 'header') {
+            str += `<td class="tracker-action-cell tracker-action-header"></td>`;
+        } else {
+            str += this.getActionCell(rowID, data);
+        }
+        return str;
+    };
+
+    this.getActionCell = function (rowID, data) {
+        const fallbackLabel = typeof rowID === 'number' ? `Track ${rowID + 1}` : 'Track';
+        const label = data.title && data.title[rowID] ? data.title[rowID] : fallbackLabel;
+        let str = `<td class="tracker-action-cell" data-row-id="${rowID}">`;
+        str += `<div class="track-actions" role="group" aria-label="${label} controls">`;
+        str += `<button type="button" class="track-action-btn" data-row-id="${rowID}" data-action="shift-left" aria-label="Shift ${label} left">←</button>`;
+        str += `<button type="button" class="track-action-btn" data-row-id="${rowID}" data-action="shift-right" aria-label="Shift ${label} right">→</button>`;
+        str += `<button type="button" class="track-action-btn" data-row-id="${rowID}" data-action="mute" aria-label="Mute ${label}">⨯</button>`;
+        str += `<button type="button" class="track-action-btn" data-row-id="${rowID}" data-action="options" aria-label="${label} options">⋮</button>`;
+        str += `</div>`;
+        str += `</td>`;
         return str;
     };
 
@@ -67,6 +94,7 @@ function trackerTable() {
         for (let c = 0; c < numCols; c++) {
             str += `<td class="pulse-step tracker-enabled" data-col-id="${c}" aria-hidden="true"></td>`;
         }
+        str += `<td class="tracker-action-cell pulse-action-spacer"></td>`;
         return str;
     };
 }

@@ -188,6 +188,53 @@ a {
     position: relative;
 }
 
+.tracker-first-cell {
+    min-width: 120px;
+    max-width: 160px;
+    padding-right: 8px;
+}
+
+.track-label {
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.track-actions {
+    display: inline-flex;
+    gap: 4px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.tracker-action-cell {
+    width: 110px;
+    text-align: center;
+    border-left: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.tracker-action-header,
+.pulse-action-spacer {
+    border: none;
+    background: transparent;
+}
+
+.track-action-btn {
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    background: rgba(15, 23, 42, 0.9);
+    color: #f8fafc;
+    border-radius: 4px;
+    width: 22px;
+    height: 22px;
+    font-size: 0.7rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+}
+
+.track-action-btn:hover {
+    background: rgba(56, 189, 248, 0.2);
+}
+
 .tracker-enabled {
     color: #0f172a;
 }
