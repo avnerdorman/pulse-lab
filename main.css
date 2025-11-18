@@ -469,7 +469,7 @@ button.full-width {
 }
 
 .pattern-actions button {
-    flex: 1 1 180px;
+    flex: 1 1 160px;
 }
 
 .legacy-storage {
@@ -485,18 +485,13 @@ button.full-width {
     color: #f8fafc;
 }
 
-#export-pattern-panel summary {
-    cursor: pointer;
-    font-weight: 600;
-}
-
 .export-pattern-content {
     margin-top: 10px;
 }
 
 .export-pattern-output {
     width: 100%;
-    min-height: 120px;
+    min-height: 260px;
     font-family: "Courier New", Courier, monospace;
     white-space: pre;
     padding: 10px;
@@ -505,6 +500,7 @@ button.full-width {
     color: #f8fafc;
     border: 1px solid rgba(56, 189, 248, 0.3);
     border-radius: 8px;
+    resize: vertical;
 }
 
 .export-pattern-actions {

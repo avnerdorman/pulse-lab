@@ -12,6 +12,7 @@
     const importBtn = document.getElementById('import-pattern-btn');
     const importInput = document.getElementById('import-pattern-input');
     const resetPatternBtn = document.getElementById('reset-pattern-btn');
+    const clearPatternBtn = document.getElementById('clear-pattern-btn');
 
     const state = {
         pendingPatternQueue: [],
@@ -33,6 +34,7 @@
         setupTrackerListeners();
         setupImportControls();
         setupResetControl();
+        setupClearControl();
         applyInitialParams();
         ensureDefaultHatPattern();
         refreshExportText();
@@ -47,10 +49,10 @@
         const isOn = flag === '1' || flag === 'true' || flag === 'yes';
         if (isOn && document && document.body) {
             document.body.classList.add('embedded');
-            // In embed mode, ensure the Export panel is open and visible
+            // In embed mode, ensure the Export panel text is visible
             const exportPanel = document.getElementById('export-pattern-panel');
             if (exportPanel) {
-                exportPanel.open = true;
+                exportPanel.scrollIntoView({ block: 'start', behavior: 'smooth' });
             }
         }
     }
@@ -76,16 +78,20 @@
         });
     }
 
-    function setupExportPanel() {
-        if (!panel || !output) {
+    function setupClearControl() {
+        if (!clearPatternBtn) {
             return;
         }
-
-        panel.addEventListener('toggle', () => {
-            if (panel.open) {
-                refreshExportText();
-            }
+        clearPatternBtn.addEventListener('click', () => {
+            clearAllPatterns();
+            showMessage('Grid cleared.');
         });
+    }
+
+    function setupExportPanel() {
+        if (!output) {
+            return;
+        }
 
         if (copyBtn) {
             copyBtn.addEventListener('click', () => {
@@ -202,7 +208,7 @@
     }
 
     function handleTrackerMutation() {
-        if (panel && panel.open) {
+        if (panel) {
             refreshExportText();
         }
         tryApplyPendingPatterns();
@@ -231,6 +237,15 @@
             return;
         }
         output.value = buildExportText();
+        autoSizeExportOutput();
+    }
+
+    function autoSizeExportOutput() {
+        if (!output) {
+            return;
+        }
+        output.style.height = 'auto';
+        output.style.height = `${output.scrollHeight}px`;
     }
 
     function buildExportText() {
@@ -656,6 +671,22 @@
                     pattern: hatPattern
                 }
             ]
+        };
+        const applied = applyPatternSetNow(patternSet);
+        if (!applied) {
+            queuePatternSet(patternSet);
+        }
+    }
+
+    function clearAllPatterns() {
+        const length = getPatternLength();
+        if (!length) {
+            return;
+        }
+        const patternSet = {
+            length,
+            clearAll: true,
+            patterns: []
         };
         const applied = applyPatternSetNow(patternSet);
         if (!applied) {
