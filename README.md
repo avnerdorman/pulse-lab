@@ -8,7 +8,11 @@ Samples courtesy of https://github.com/oramics/sampled/
 - Web Audio step sequencer with precise timing (WAAClock)
 - Always-on pulse row for visual metronome (silent, non-interactive)
 - Toussaint-inspired pattern presets (2–3 groupings, cross-rhythms)
-- Export pattern as text (copy or download)
+- **Pattern import/export** - save/load patterns as .txt files
+- **Reset to pulse** - instantly set hi-hat to all 16th notes
+- **Clear grid** - remove all beats from all tracks
+- **Measure length presets** - quick dropdown for 12/16/24/32/36 steps
+- **Inline tempo display** - live BPM value shown next to slider
 - URL sharing of kit, tempo, length, and row patterns
 - LocalStorage save/load (legacy panel hidden by default)
 
@@ -21,6 +25,8 @@ npm install
 npx browserify src/app.js -o bundle.js
 open index.html
 ```
+
+The app will automatically apply a default hi-hat pulse pattern on first load (can be cleared or modified immediately).
 
 ## Development
 
@@ -35,6 +41,15 @@ One-time build:
 ```zsh
 npx browserify src/app.js -o bundle.js
 ```
+
+## Pattern Import/Export
+**Export:** Click "Copy to Clipboard" or "Download .txt" to save your pattern in a human-readable text format with tempo, length, and pulse/track data.
+
+**Import:** Click "Import Pattern" to load a previously exported .txt file. The app will automatically match track labels to the current sample set and apply the pattern (with tempo and length).
+
+## Pattern Utilities
+- **Reset to Pulse:** Sets hi-hat (or closest match) to all 16th notes - great starting point for exploring subdivisions
+- **Clear Grid:** Removes all beats from all tracks (preserves pulse row)
 
 ## Tempo Mapping
 - The UI `BPM` is musical tempo (quarter-notes per minute).
@@ -53,11 +68,11 @@ Compact mode:
 - Keeps all functionality (playback, presets, export)
 
 ## Project Structure
-- `index.html` – Main app shell (controls, transport, tracker area)
+- `index.html` – Main app shell (controls, transport, tracker area, export panel)
 - `src/app.js` – Core audio + scheduler wiring (bundled to `bundle.js`)
 - `src/simple-tracker.js` – WAAClock timing + DOM highlight loop
 - `src/tracker-table.js` – Tracker grid (includes Pulse row above tracks)
-- `script.js` – UI enhancements (presets, export, URL sharing, embed flag)
+- `script.js` – UI enhancements (presets, export, import, URL sharing, pattern utilities, embed flag)
 - `main.css` – UI styling (+ `.embedded` compact rules)
 
 ## License

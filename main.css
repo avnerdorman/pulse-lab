@@ -73,6 +73,11 @@ a {
     overflow-x: auto;
 }
 
+#tracker-table {
+    max-width: 100%;
+    table-layout: auto;
+}
+
 #advanced-panels {
     margin-top: 20px;
     display: grid;
@@ -163,6 +168,9 @@ a {
 
 .measure-length-inputs input {
     text-align: center;
+    color: #f8fafc;
+    background-color: rgba(15, 18, 30, 0.9);
+    border: 1px solid rgba(148, 163, 184, 0.4);
 }
 
 @media (max-width: 640px) {
@@ -248,7 +256,6 @@ a {
     bottom: 4px;
     background: #f97316;
     border-radius: 999px;
-}
 }
 
 .tracker-current {

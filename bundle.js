@@ -1087,26 +1087,22 @@ function setupBaseEvents() {
         }
     });
 
-    document.getElementById('measureLength').addEventListener('input', (e) => {
+    document.getElementById('measureLength').addEventListener('change', (e) => {
+        let value = document.getElementById('measureLength').value;
+        let length = parseInt(value);
 
-        $('#measureLength').bind('keypress keydown keyup', (e) => {
-            if (e.keyCode == 13) {
+        if (length < 1) return;
+        if (length > 32) {
+            length = 32;
+            document.getElementById('measureLength').value = 32;
+        }
+        schedule.measureLength = length;
 
-                e.preventDefault();
-
-                let value = document.getElementById('measureLength').value;
-                let length = parseInt(value);
-
-                if (length < 1) return;
-                schedule.measureLength = length;
-
-                let track = schedule.getTrackerValues();
-                setupTrackerHtml(currentSampleData, length);
-                schedule.measureLength = length;
-                schedule.loadTrackerValues(track)
-                schedule.setupEvents();
-            }
-        });
+        let track = schedule.getTrackerValues();
+        setupTrackerHtml(currentSampleData, length);
+        schedule.measureLength = length;
+        schedule.loadTrackerValues(track)
+        schedule.setupEvents();
     });
 
     $('.base').on('change', function () {
@@ -1740,7 +1736,7 @@ module.exports = {
   settings: {
     sampleSet:
       "https://raw.githubusercontent.com/oramics/sampled/master/DRUMS/pearl-master-studio/sampled.instrument.json",
-    measureLength: 32,
+    measureLength: 16,
     bpm: 80,
     detune: 0,
     gainEnabled: "gain",
@@ -2054,12 +2050,13 @@ function trackerTable() {
         
         str += `<td class="tracker-first-cell" data-row-id="${rowID}">`;
         if (rowID === 'header') {
-            if (data.title) { 
+            if (data.title) {
                 str += data.title[rowID] || '';
             }
             str += `</td>`;
             return str;
         }
+
         const fallbackLabel = typeof rowID === 'number' ? `Track ${rowID + 1}` : '';
         const label = data.title && data.title[rowID] ? data.title[rowID] : fallbackLabel;
         str += `<div class="track-label">${label}</div>`;
@@ -2085,6 +2082,7 @@ function trackerTable() {
             }
             str += `</td>`;
         }
+
         if (rowID === 'header') {
             str += `<td class="tracker-action-cell tracker-action-header"></td>`;
         } else {

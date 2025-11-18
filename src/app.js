@@ -204,26 +204,22 @@ function setupBaseEvents() {
         }
     });
 
-    document.getElementById('measureLength').addEventListener('input', (e) => {
+    document.getElementById('measureLength').addEventListener('change', (e) => {
+        let value = document.getElementById('measureLength').value;
+        let length = parseInt(value);
 
-        $('#measureLength').bind('keypress keydown keyup', (e) => {
-            if (e.keyCode == 13) {
+        if (length < 1) return;
+        if (length > 32) {
+            length = 32;
+            document.getElementById('measureLength').value = 32;
+        }
+        schedule.measureLength = length;
 
-                e.preventDefault();
-
-                let value = document.getElementById('measureLength').value;
-                let length = parseInt(value);
-
-                if (length < 1) return;
-                schedule.measureLength = length;
-
-                let track = schedule.getTrackerValues();
-                setupTrackerHtml(currentSampleData, length);
-                schedule.measureLength = length;
-                schedule.loadTrackerValues(track)
-                schedule.setupEvents();
-            }
-        });
+        let track = schedule.getTrackerValues();
+        setupTrackerHtml(currentSampleData, length);
+        schedule.measureLength = length;
+        schedule.loadTrackerValues(track)
+        schedule.setupEvents();
     });
 
     $('.base').on('change', function () {

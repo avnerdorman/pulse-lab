@@ -484,7 +484,7 @@ module.exports = {
   settings: {
     sampleSet:
       "https://raw.githubusercontent.com/oramics/sampled/master/DRUMS/pearl-master-studio/sampled.instrument.json",
-    measureLength: 32,
+    measureLength: 16,
     bpm: 80,
     detune: 0,
     gainEnabled: "gain",

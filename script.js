@@ -309,7 +309,7 @@
         return activeRows.map(row => {
             const labelCell = row.querySelector('.tracker-first-cell');
             const baseLabel = labelCell ? labelCell.textContent.trim() : `Track ${row.dataset.id || ''}`.trim();
-            const label = `${baseLabel || 'Track'}:`;
+            const label = `${formatTrackLabel(baseLabel) || 'Track'}:`;
             const cells = Array.from(row.querySelectorAll('.tracker-cell'));
             return padLabel(label) + buildRowPattern(cells, length);
         });
@@ -342,6 +342,15 @@
             values.push(cell && cell.classList.contains('tracker-enabled') ? 'X ' : '. ');
         }
         return values.join('').trimEnd();
+    }
+
+    function formatTrackLabel(label) {
+        if (!label) {
+            return '';
+        }
+        return label
+            .replace(/hihat-open/gi, 'hihat-o')
+            .replace(/hihat-closed/gi, 'hihat-cl');
     }
 
     function padLabel(label) {
@@ -782,7 +791,7 @@
             cells[i].classList.remove('tracker-enabled');
         }
     }
-})();
+
     function handleTrackAction(action, rowId) {
         if (!action || rowId === undefined) {
             return;
@@ -815,8 +824,20 @@
             const last = pattern.pop();
             pattern.unshift(last);
         }
-        for (let i = 0; i < length; i++) {
-            cells[i].classList.toggle('tracker-enabled', !!pattern[i]);
+        const patternString = pattern.map(val => (val ? 'X' : '.')).join('');
+        const patternSet = {
+            length,
+            clearAll: false,
+            patterns: [
+                {
+                    rowId: String(rowId),
+                    pattern: patternString
+                }
+            ]
+        };
+        const applied = applyPatternSetNow(patternSet);
+        if (!applied) {
+            queuePatternSet(patternSet);
         }
-        refreshExportText();
     }
+})();

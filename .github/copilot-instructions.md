@@ -3,17 +3,17 @@
 ## Project Overview
 Multi-purpose rhythm and pulse exploration toolkit with three main implementations:
 
-1. **Main Drum Machine** (`index.html` + `src/app.js` + `script.js`) - Full-featured sequencer with Web Audio API, preset patterns, URL sharing, and export
+1. **Main Drum Machine** (`index.html` + `src/app.js` + `script.js`) - Full-featured sequencer with Web Audio API, preset patterns, URL sharing, pattern import/export, and pedagogical utilities
 2. **Single-Page Version** (`single-page-version.html`) - Standalone pulse grouping lab with embedded styles
 3. **Theory IV Lab** (`theory-iv-lab/`) - Jekyll-based educational site with interactive rhythm tools for post-tonal music theory course
 
-The main drum machine loads external samples from GitHub (oramics/sampled) and provides a step sequencer with real-time audio effects, Toussaint-inspired pattern presets, and pedagogical features for exploring pulse groupings.
+The main drum machine loads external samples from GitHub (oramics/sampled) and provides a step sequencer with real-time audio effects, Toussaint-inspired pattern presets, import/export capabilities, and pedagogical features for exploring pulse groupings.
 
 ## Architecture
 
 ### Core Components (Main App)
 - **`src/app.js`**: Core orchestrator - initializes AudioContext, loads samples, manages localStorage, wires up audio scheduling
-- **`script.js`**: UI enhancements layer - handles presets, URL parameter sharing, pattern export/import, and tracker mutations
+- **`script.js`**: UI enhancements layer - handles presets, URL parameter sharing, pattern export/import, default patterns, reset/clear utilities, and tracker mutations
 - **`src/simple-tracker.js`**: Beat scheduler using WAAClock for precise timing. Manages playback loop, beat column scheduling, and UI state sync
 - **`src/tracker-table.js`**: Generates HTML table for sequencer grid. Includes pulse row (visual metronome) and drum tracks
 - **`src/get-set-controls.js`**: Bidirectional form data sync - parses string values to floats/booleans
@@ -21,7 +21,7 @@ The main drum machine loads external samples from GitHub (oramics/sampled) and p
 ### Dual-Script Architecture
 The app uses **two separate JavaScript files**:
 1. **`bundle.js`** - Browserified output from `src/app.js` (core audio engine and sequencer logic)
-2. **`script.js`** - Standalone vanilla JS (UI features: presets, sharing, export)
+2. **`script.js`** - Standalone vanilla JS (UI features: presets, sharing, export, import, utilities)
 
 This separation allows core audio functionality to remain isolated from UI enhancements. `script.js` observes and manipulates the DOM created by `bundle.js`.
 
@@ -100,8 +100,9 @@ Patterns can specify:
 - `pattern: "X.X...X."` - string representation
 - `generator: length => buildRandomGroupingPattern(length)` - dynamic function
 
-### Export System (script.js)
-**Text export format:**
+### Pattern Import/Export System (script.js)
+
+**Export Format (.txt):**
 ```
 Tempo: 80 BPM
 Pattern length: 16 pulses
@@ -112,10 +113,57 @@ Kick:        X . . . X . . . X . . . X . . .
 Snare:       . . X . . . X . . . X . . . X .
 ```
 
-Export features:
-- Copy to clipboard
-- Download as .txt
+**Export features:**
+- Copy to clipboard (with fallback for older browsers)
+- Download as .txt file
 - Auto-refresh on tracker changes via MutationObserver
+- Only includes tracks with active beats (excludes silent rows)
+- Label formatting: shortens `hihat-open` → `hihat-o`, `hihat-closed` → `hihat-cl`
+
+**Import functionality:**
+- File picker loads `.txt` files via FileReader API
+- Parses tempo, pattern length, and track patterns from exported format
+- Matches imported track labels to current sample set using:
+  1. Exact lowercase label match
+  2. Fuzzy regex matching (generated from label words)
+  3. Falls back to track index position
+- Queues pattern application if measure length needs to change
+- Sets both BPM and measure length from imported data
+- Normalizes loaded BPM using same 72-84 range as URL sharing
+
+**Import workflow (script.js):**
+1. `setupImportControls()` wires file input handler
+2. `importPatternFromText()` parses .txt and queues pattern set
+3. `parseExportedPattern()` extracts BPM, length, and row data
+4. `buildRowLookup()` creates label→rowId mapping
+5. `queuePatternSet()` defers application until measure length matches
+6. `applyPatternSetNow()` applies patterns when tracker DOM is ready
+
+### Pattern Utilities (script.js)
+
+**Reset to Pulse Pattern:**
+- Sets hi-hat (or similar track) to all 16th notes (XXXXXXXXXXXXXXXX)
+- Uses `applyHatPulsePattern()` to find closed hi-hat track via regex matcher
+- Provides pedagogical starting point for pulse subdivision exploration
+- Queues pattern if measure length doesn't match current grid
+
+**Clear All Patterns:**
+- Removes all beats from all tracks (preserves pulse row)
+- Uses `clearAllPatterns()` to reset grid to blank state
+- Useful for starting fresh without changing tempo/length/sample set
+- Applied immediately or queued depending on tracker state
+
+**Default Hi-Hat Pattern:**
+- `ensureDefaultHatPattern()` runs on page load
+- Automatically applies pulse pattern to hi-hat if no saved localStorage data
+- Ensures new users see/hear something immediately
+- Only runs once on first visit (respects existing patterns)
+
+**Row Shifting (Future Feature):**
+- `shiftRow()` rotates pattern left/right
+- `handleTrackAction()` handles shift-left/shift-right actions
+- Currently wired but not exposed in UI
+- Useful for exploring phase relationships between patterns
 
 ### URL Sharing (script.js)
 Share button generates URLs with current state:
@@ -124,11 +172,43 @@ Share button generates URLs with current state:
 - Patterns decoded and queued until tracker rebuilds with correct length
 - Uses `state.pendingPatternQueue` to defer application until DOM ready
 
+### UI Organization (index.html)
+
+**Transport Panel (inline layout):**
+- Play/Pause button
+- BPM slider with live value display (`<span id="bpm-value">80 BPM</span>`)
+- Measure length number input with preset dropdown (12/16/24/32/36)
+- Share button (generates URL with encoded pattern)
+
+**Pattern Utilities Section:**
+- Import Pattern button (file picker for .txt files)
+- Reset to Pulse button (sets hi-hat to all 16ths)
+- Clear Grid button (removes all beats)
+- Grouped under "Pattern Utilities" heading
+
+**Export Panel (inline below tracker):**
+- Auto-updating textarea with formatted pattern
+- Copy to Clipboard button
+- Download .txt button
+- Refreshes automatically when tracker changes
+
+**Advanced Panels (collapsible):**
+- Detune & Envelope controls (ADSR parameters)
+- Delay & Filter controls (audio effects)
+
+**Form Integration:**
+- All controls are `<input class="base">` elements within `#trackerControls` form
+- `get-set-controls.js` syncs form ↔ audio settings
+- Changes trigger immediate audio parameter updates (except measure length)
+
 ### Event Handling
 - jQuery used for `.base` change handlers and legacy storage UI
 - Modern querySelector for tracker cells
-- `script.js` uses MutationObserver to watch for tracker DOM changes
+- `script.js` uses MutationObserver to watch for tracker DOM changes (triggers export refresh)
 - Beat cells use `data-row-id` and `data-col-id` attributes
+- BPM input triggers `updateBpmDisplay()` to refresh live BPM value
+- Measure length input triggers `syncMeasureLengthPreset()` to sync dropdown
+- Import input opens file picker and parses .txt via FileReader
 
 ### Audio Node Cleanup
 `disconnectNode()` helper with setTimeout based on ADSR total time to prevent memory leaks from orphaned nodes.
