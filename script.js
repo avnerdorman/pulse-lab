@@ -9,14 +9,15 @@
     const measureLengthInput = document.getElementById('measureLength');
     const measureLengthPreset = document.getElementById('measureLengthPreset');
     const sampleSetSelect = document.getElementById('sampleSet');
-    const presetSelect = document.getElementById('preset-select');
-    const presetBtn = document.getElementById('apply-preset-btn');
-    const shareBtn = document.getElementById('share-link-btn');
+    const importBtn = document.getElementById('import-pattern-btn');
+    const importInput = document.getElementById('import-pattern-input');
+    const resetPatternBtn = document.getElementById('reset-pattern-btn');
 
     const state = {
         pendingPatternQueue: [],
         measureBindingInitialized: false,
-        initialParams: parseQueryParams()
+        initialParams: parseQueryParams(),
+        defaultPatternQueued: false
     };
 
     const LABEL_WIDTH = 12;
@@ -24,72 +25,16 @@
     const LOADED_BPM_MIN = 20;
     const LOADED_BPM_MAX = 240;
 
-    const TRACK_TARGETS = {
-        trackA: { matcher: /(kick|bass\s?drum|bd)/i, fallbackIndex: 0 },
-        trackB: { matcher: /(snare|rim|clave|sd)/i, fallbackIndex: 1 },
-        trackHat: { matcher: /(hi[-\s]?hat|hat|ride|cymbal)/i, fallbackIndex: 2 }
-    };
-
-    const PRESETS = {
-        empty: {
-            label: 'Empty',
-            measureLength: 16,
-            bpm: 80,
-            patterns: []
-        },
-        'two-three-alt': {
-            label: '2–3 Alternation',
-            measureLength: 16,
-            bpm: 78,
-            patterns: [
-                { target: 'trackA', hits: [0, 2, 5, 7, 10, 12] },
-                { target: 'trackB', hits: [1, 4, 6, 9, 11, 14] }
-            ]
-        },
-        'cross-23': {
-            label: 'Cross 2-vs-3',
-            measureLength: 12,
-            bpm: 82,
-            patterns: [
-                { target: 'trackA', hits: [0, 2, 4, 6, 8, 10] },
-                { target: 'trackB', hits: [0, 3, 6, 9] }
-            ]
-        },
-        'offset-23': {
-            label: 'Offset 2-vs-3',
-            measureLength: 16,
-            bpm: 84,
-            patterns: [
-                { target: 'trackA', hits: [0, 2, 5, 7, 10, 12, 15] },
-                { target: 'trackB', hits: [1, 3, 6, 8, 11, 13] }
-            ]
-        },
-        'random-23': {
-            label: 'Random 2/3',
-            measureLength: 16,
-            bpm: 76,
-            patterns: [
-                {
-                    target: 'trackA',
-                    generator: length => buildRandomGroupingPattern(length)
-                },
-                {
-                    target: 'trackHat',
-                    generator: length => new Array(length).fill('X').join('')
-                }
-            ]
-        }
-    };
-
     initialize();
 
     function initialize() {
         applyEmbedMode();
         setupExportPanel();
         setupTrackerListeners();
-        setupPresetControls();
-        setupShareControls();
+        setupImportControls();
+        setupResetControl();
         applyInitialParams();
+        ensureDefaultHatPattern();
         refreshExportText();
     }
 
@@ -108,6 +53,27 @@
                 exportPanel.open = true;
             }
         }
+    }
+
+    function ensureDefaultHatPattern() {
+        if (state.defaultPatternQueued) {
+            return;
+        }
+        if (state.initialParams && state.initialParams.rows) {
+            return;
+        }
+        applyHatPulsePattern();
+        state.defaultPatternQueued = true;
+    }
+
+    function setupResetControl() {
+        if (!resetPatternBtn) {
+            return;
+        }
+        resetPatternBtn.addEventListener('click', () => {
+            applyHatPulsePattern();
+            showMessage('Reset to hi-hat pulse.');
+        });
     }
 
     function setupExportPanel() {
@@ -209,25 +175,29 @@
         }
     }
 
-    function setupPresetControls() {
-        if (!presetSelect || !presetBtn) {
+    function setupImportControls() {
+        if (!importBtn || !importInput) {
             return;
         }
-        presetBtn.addEventListener('click', () => {
-            applyPreset(presetSelect.value);
+        importBtn.addEventListener('click', () => {
+            importInput.click();
         });
-    }
-
-    function setupShareControls() {
-        if (!shareBtn) {
-            return;
-        }
-        shareBtn.addEventListener('click', () => {
-            const link = buildShareLink();
-            if (!link) {
+        importInput.addEventListener('change', event => {
+            const files = event.target.files;
+            if (!files || !files.length) {
                 return;
             }
-            copyString(link, () => showMessage('Shareable link copied to clipboard.'));
+            const file = files[0];
+            const reader = new FileReader();
+            reader.onload = e => {
+                const text = e && e.target ? e.target.result : '';
+                importPatternFromText(typeof text === 'string' ? text : '');
+                importInput.value = '';
+            };
+            reader.onerror = () => {
+                showMessage('Unable to read the selected file.');
+            };
+            reader.readAsText(file);
         });
     }
 
@@ -372,42 +342,6 @@
         }
     }
 
-    function copyString(value, onSuccess) {
-        if (!value) {
-            return;
-        }
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(value)
-                .then(() => {
-                    if (typeof onSuccess === 'function') {
-                        onSuccess();
-                    }
-                })
-                .catch(() => fallbackCopyString(value, onSuccess));
-        } else {
-            fallbackCopyString(value, onSuccess);
-        }
-    }
-
-    function fallbackCopyString(value, onSuccess) {
-        const temp = document.createElement('textarea');
-        temp.value = value;
-        temp.setAttribute('readonly', 'readonly');
-        temp.style.position = 'absolute';
-        temp.style.left = '-9999px';
-        document.body.appendChild(temp);
-        temp.select();
-        try {
-            document.execCommand('copy');
-            if (typeof onSuccess === 'function') {
-                onSuccess();
-            }
-        } catch (err) {
-            window.prompt('Copy this link:', value);
-        }
-        document.body.removeChild(temp);
-    }
-
     function showMessage(message) {
         const el = document.getElementById('app-message');
         if (!el) {
@@ -421,41 +355,134 @@
         }, 2000);
     }
 
-    function buildShareLink() {
-        const length = getPatternLength();
-        if (!length) {
-            return '';
+    function importPatternFromText(text) {
+        const parsed = parseExportedPattern(text);
+        if (!parsed) {
+            showMessage('Could not parse that pattern file.');
+            return;
         }
-        const params = new URLSearchParams();
-        params.set('len', length);
-        const tempo = getTempo();
-        if (tempo !== null) {
-            params.set('bpm', tempo);
+        if (parsed.length) {
+            setMeasureLength(parsed.length);
         }
-        if (sampleSetSelect && sampleSetSelect.value) {
-            params.set('ss', sampleSetSelect.value);
+        if (parsed.bpm) {
+            setBpm(normalizeLoadedBpm(parsed.bpm));
         }
-        const rowsParam = encodeRowStates(length);
-        if (rowsParam) {
-            params.set('rows', rowsParam);
-        }
-        return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
-    }
-
-    function encodeRowStates(length) {
         const rows = getTrackRows();
         if (!rows.length) {
+            return;
+        }
+        const lookup = buildRowLookup(rows);
+        const configs = parsed.rows.map(entry => {
+            const info = lookup.get(entry.label.toLowerCase());
+            const config = { pattern: entry.pattern };
+            if (info && info.rowId) {
+                config.rowId = info.rowId;
+            } else if (info) {
+                config.fallbackIndex = info.index;
+            } else {
+                config.matcher = buildLabelMatcher(entry.label);
+            }
+            return config;
+        });
+        queuePatternSet({
+            length: parsed.length || (parsed.rows[0] && parsed.rows[0].pattern.length) || getPatternLength(),
+            clearAll: true,
+            patterns: configs
+        });
+        showMessage('Pattern imported.');
+    }
+
+    function parseExportedPattern(text) {
+        if (!text || typeof text !== 'string') {
+            return null;
+        }
+        const lines = text.split(/\r?\n/);
+        let bpm = null;
+        let length = null;
+        const rows = [];
+        const labelRegex = /^\s*([^:]+):\s*(.+)$/;
+        for (const rawLine of lines) {
+            if (!rawLine) {
+                continue;
+            }
+            const line = rawLine.trim();
+            if (!line) {
+                continue;
+            }
+            if (/^\s*Tempo:/i.test(rawLine)) {
+                const match = rawLine.match(/Tempo:\s*(\d+)/i);
+                if (match) {
+                    const parsed = parseInt(match[1], 10);
+                    if (Number.isFinite(parsed)) {
+                        bpm = parsed;
+                    }
+                }
+                continue;
+            }
+            if (/^\s*Pattern length:/i.test(rawLine)) {
+                const match = rawLine.match(/Pattern length:\s*(\d+)/i);
+                if (match) {
+                    const parsed = parseInt(match[1], 10);
+                    if (Number.isFinite(parsed)) {
+                        length = parsed;
+                    }
+                }
+                continue;
+            }
+            if (/^\s*(Pulses|Repeats):/i.test(rawLine)) {
+                continue;
+            }
+            const labelMatch = rawLine.match(labelRegex);
+            if (!labelMatch) {
+                continue;
+            }
+            const label = labelMatch[1].trim();
+            const patternString = labelMatch[2].trim();
+            const normalizedPattern = normalizeExportedPattern(patternString);
+            if (label && normalizedPattern) {
+                rows.push({ label, pattern: normalizedPattern });
+            }
+        }
+        if (!rows.length) {
+            return null;
+        }
+        if (!length) {
+            length = rows[0].pattern.length;
+        }
+        return { bpm, length, rows };
+    }
+
+    function normalizeExportedPattern(value) {
+        if (!value) {
             return '';
         }
-        const parts = rows.map(row => {
-            const cells = Array.from(row.querySelectorAll('.tracker-cell'));
-            const bits = cells
-                .slice(0, length)
-                .map(cell => (cell.classList.contains('tracker-enabled') ? '1' : '0'))
-                .join('');
-            return `${row.dataset.id || ''}:${bits}`;
+        const tokens = value.trim().split(/\s+/).filter(Boolean);
+        if (!tokens.length) {
+            return '';
+        }
+        return tokens.map(token => (/^(x|●|1)$/i.test(token) ? 'X' : '.')).join('');
+    }
+
+    function buildRowLookup(rows) {
+        const map = new Map();
+        rows.forEach((row, index) => {
+            const key = getRowLabel(row).toLowerCase();
+            if (key) {
+                map.set(key, { rowId: row.dataset.id || null, index });
+            }
         });
-        return parts.join(',');
+        return map;
+    }
+
+    function buildLabelMatcher(label) {
+        if (!label) {
+            return null;
+        }
+        return new RegExp(`^${escapeRegExp(label.trim())}$`, 'i');
+    }
+
+    function escapeRegExp(value) {
+        return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
     function decodeRowStates(param) {
@@ -585,63 +612,6 @@
         sampleSetSelect.dispatchEvent(new Event('change', { bubbles: true }));
     }
 
-    function applyPreset(key) {
-        const preset = PRESETS[key];
-        if (!preset) {
-            return;
-        }
-        if (preset.measureLength) {
-            setMeasureLength(preset.measureLength);
-        }
-        if (preset.bpm) {
-            setBpm(normalizeLoadedBpm(preset.bpm));
-        }
-        const length = preset.measureLength || getPatternLength();
-        const patterns = preset.patterns.map(cfg => {
-            const target = TRACK_TARGETS[cfg.target] || {};
-            const base = {
-                matcher: cfg.matcher || target.matcher || null,
-                fallbackIndex: typeof cfg.fallbackIndex === 'number' ? cfg.fallbackIndex : target.fallbackIndex
-            };
-            if (cfg.rowId !== undefined) {
-                base.rowId = cfg.rowId;
-            }
-            if (cfg.pattern) {
-                base.pattern = cfg.pattern;
-            } else if (cfg.hits) {
-                base.pattern = buildPatternFromHits(length, cfg.hits);
-            } else if (typeof cfg.generator === 'function') {
-                base.pattern = len => cfg.generator(len);
-            }
-            return base;
-        });
-        queuePatternSet({
-            length,
-            clearAll: true,
-            patterns
-        });
-    }
-
-    function buildPatternFromHits(length, hits) {
-        const arr = new Array(length).fill('.');
-        hits.forEach(idx => {
-            if (idx >= 0 && idx < length) {
-                arr[idx] = 'X';
-            }
-        });
-        return arr.join('');
-    }
-
-    function buildRandomGroupingPattern(length) {
-        const arr = new Array(length).fill('.');
-        let i = 0;
-        while (i < length) {
-            arr[i] = 'X';
-            i += Math.random() < 0.5 ? 2 : 3;
-        }
-        return arr.join('');
-    }
-
     function queuePatternSet(patternSet) {
         state.pendingPatternQueue.push(patternSet);
         tryApplyPendingPatterns();
@@ -670,6 +640,26 @@
             if (state.pendingPatternQueue.length) {
                 tryApplyPendingPatterns();
             }
+        }
+    }
+
+    function applyHatPulsePattern() {
+        const length = getPatternLength() || 16;
+        const hatPattern = new Array(length).fill('X').join('');
+        const patternSet = {
+            length,
+            clearAll: true,
+            patterns: [
+                {
+                    matcher: /(hi[-\s]?hat|hihat).*closed/i,
+                    fallbackIndex: 2,
+                    pattern: hatPattern
+                }
+            ]
+        };
+        const applied = applyPatternSetNow(patternSet);
+        if (!applied) {
+            queuePatternSet(patternSet);
         }
     }
 

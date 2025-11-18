@@ -102,15 +102,32 @@ function scheduleAudioBeat(beat, triggerTime) {
         if (!options.gainEnabled) {
             gainNode = gain.getGainNode(triggerTime);
             source.connect(gainNode);
-            return gainNode;
+            return applyInstrumentGain(gainNode);
         }
 
         gain.setOptions(options);
         gainNode = gain.getGainNode(triggerTime);
         source.connect(gainNode);
-        return gainNode;
+        return applyInstrumentGain(gainNode);
 
 
+    }
+
+    function applyInstrumentGain(node) {
+        const level = ctx.createGain();
+        level.gain.value = getInstrumentGain(instrumentName);
+        node.connect(level);
+        return level;
+    }
+
+    function getInstrumentGain(name) {
+        if (!name) {
+            return 1;
+        }
+        if (/hi[\-\s]?hat.*closed/i.test(name) || /hihat.*closed/i.test(name)) {
+            return 0.7;
+        }
+        return 1;
     }
 
     // Note delay always uses above gain - even if not enabled

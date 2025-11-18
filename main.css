@@ -184,9 +184,24 @@ a {
     color: #f8fafc;
 }
 
+.tracker-cell {
+    position: relative;
+}
+
 .tracker-enabled {
-    background: #f97316;
     color: #0f172a;
+}
+
+.tracker-enabled::after {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    background: #f97316;
+    border-radius: 999px;
+}
 }
 
 .tracker-current {
@@ -206,6 +221,10 @@ a {
 
 .pulse-label {
     font-weight: bold;
+}
+
+.pulse-row {
+    display: none;
 }
 
 #app-message {
@@ -411,6 +430,8 @@ a {
 .share-panel button,
 .control-row button,
 .preset-controls button,
+.pattern-actions button,
+.import-panel button,
 .export-pattern-actions button,
 .transport-panel .icon-btn {
     background: linear-gradient(135deg, #38bdf8, #2563eb);
@@ -426,6 +447,8 @@ a {
 .share-panel button:hover,
 .control-row button:hover,
 .preset-controls button:hover,
+.pattern-actions button:hover,
+.import-panel button:hover,
 .export-pattern-actions button:hover {
     transform: translateY(-1px);
     box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
@@ -437,6 +460,16 @@ a {
 
 button.full-width {
     width: 100%;
+}
+
+.pattern-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.pattern-actions button {
+    flex: 1 1 180px;
 }
 
 .legacy-storage {
