@@ -259,9 +259,191 @@ Edit `PRESETS` object in `script.js`:
 - BPM range for shared links normalized to 72-84 (pedagogical preference)
 - Shared URL patterns won't apply until tracker has matching `measureLength`
 
-## Theory IV Lab (Educational Context)
+## Educational Context & Pedagogical Goals
+
+### Primary Use: Post-Tonal/Rhythm Theory Course
+This application is designed as an **educational tool for teaching rhythm theory** in a post-tonal music theory course. The focus is on:
+
+1. **Pulse and Meter Fundamentals**
+   - Understanding pulse as the fundamental unit of rhythmic organization
+   - The pulse row serves as a constant reference point (visual metronome)
+   - Exploring how different groupings emerge from the same underlying pulse stream
+
+2. **Toussaint-Style Rhythm Patterns**
+   - Named after Godfried Toussaint's work on computational rhythm analysis
+   - Focus on cross-cultural rhythmic patterns (clave, tresillo, etc.)
+   - Exploring mathematical properties of rhythmic patterns (evenness, maximally even sets)
+   - Understanding rhythmic spacing and interval patterns
+
+3. **Polyrhythm and Metric Dissonance**
+   - Layering different groupings (2s, 3s, 4s, 5s) over the same pulse
+   - Creating tension through conflicting metric layers
+   - Exploring phase relationships via row shifting
+   - Understanding metric modulation concepts
+
+4. **Pre-Notational Rhythm Exploration**
+   - Working with rhythm directly without traditional notation
+   - Grid-based representation (like tracker software or drum machines)
+   - Immediate auditory feedback for theoretical concepts
+   - Separation from pitch-based thinking
+
+5. **Pattern Analysis and Transformation**
+   - Visual pattern recognition in grid format
+   - Pattern rotation (cyclic permutation) via shift buttons
+   - Pattern complementarity and inverse relationships
+   - Export to text for analysis and documentation
+
+### Pedagogical Features
+
+**Visual Learning:**
+- Grid representation maps directly to time (columns = temporal positions)
+- Always-visible pulse row reinforces beat subdivision
+- Real-time highlighting shows playback position
+- Export panel provides text-based pattern analysis
+
+**Interactive Experimentation:**
+- Immediate audio feedback when clicking cells
+- Easy pattern manipulation (shift, clear, every-N)
+- Multiple sample sets for different sonic characters
+- Tempo control for exploring patterns at different speeds
+
+**Pattern Sharing & Documentation:**
+- URL sharing for distributing examples to students
+- Import/export for homework submissions
+- Text format readable without software
+- Embeddable in course websites (Google Sites, LMS)
+
+**Scaffolded Exploration:**
+- "Reset to Pulse" provides starting point (all 16ths)
+- "Every N" buttons create basic patterns (kick every 4, etc.)
+- Preset patterns demonstrate concepts (Toussaint rhythms)
+- Clear Grid allows starting fresh
+
+### Common Educational Use Cases
+
+1. **Exploring Euclidean Rhythms**
+   - Use "Every N" buttons to create evenly-spaced patterns
+   - E.g., "Every 3" in 16 steps creates near-Euclidean distribution
+   - Compare E(5,16) vs E(7,16) patterns
+   - Discuss maximally even distribution
+
+2. **Analyzing Traditional Rhythms**
+   - Import/create clave patterns (son, rumba)
+   - Explore African bell patterns (gankogui, kidi)
+   - Study metric hierarchies in Western drumming
+   - Compare patterns across cultures
+
+3. **Understanding Additive Rhythm**
+   - Build patterns using groupings (3+3+2, 2+2+3+2+3, etc.)
+   - Visualize how 12 or 16 pulses can be grouped differently
+   - Explore asymmetric meters (5/8, 7/8, 11/8)
+   - Connect to Bartók and Stravinsky rhythm practices
+
+4. **Phase Music / Minimalism**
+   - Set up repeating patterns on multiple tracks
+   - Shift one track to create gradual phase relationships
+   - Explore Steve Reich-style phase patterns
+   - Understand how identical patterns interact at different phases
+
+5. **Metric Modulation Concepts**
+   - Set tempo, then change to show same pattern at different speeds
+   - Layer patterns that imply different tempos
+   - Explore 3:4 and 2:3 relationships
+   - Connect to Carter's metric modulation technique
+
+### Student Workflow
+
+**Typical Assignment Pattern:**
+1. Teacher shares URL with base pattern
+2. Students modify/experiment with pattern
+3. Students export their work as .txt file
+4. Submit .txt file or share URL for feedback
+5. Teacher imports patterns for review/discussion
+
+**In-Class Activities:**
+1. Project app on screen
+2. Build patterns collaboratively
+3. Immediate playback for group listening
+4. Export pattern for later analysis
+5. Compare multiple student solutions
+
+### Technical Pedagogical Considerations
+
+**Why This Architecture Matters for Teaching:**
+- **No Installation Required**: Browser-based, works on any device
+- **Platform Independent**: Windows, Mac, Chromebook, tablet
+- **Offline Capable**: Can run from local files if needed
+- **Shareable**: URLs encode complete musical state
+- **Accessible**: No DAW knowledge required
+- **Focused**: Limited controls keep attention on rhythm concepts
+- **Embeddable**: Can be integrated into LMS (Canvas, Moodle, etc.)
+
+**Sample Library Pedagogical Value:**
+- Classic drum machines (TR-909, CR-78) connect to electronic music history
+- Acoustic kits (Pearl) for traditional drumming context
+- Different timbres help distinguish layered patterns
+- Sample selection doesn't require audio engineering knowledge
+
+### Integration with Other Course Materials
+
+**Theory IV Lab (Educational Context):**
 - Jekyll static site in `theory-iv-lab/` directory
 - Uses includes for modular embedding of interactive tools
 - Designed for MUS_CLAS 242 (Post-Tonal Theory) at Gettysburg College
 - Focuses on temporal organization, grouping, and pre-notational rhythm concepts
 - Separate pulse-grouping implementation with Tone.js in `theory-iv-lab/assets/js/`
+
+**Recommended Complementary Resources:**
+- Toussaint's "The Geometry of Musical Rhythm" (book)
+- AABA or circular rhythm visualization tools
+- Traditional music notation software for comparison
+- Audio examples from various musical traditions
+
+### Future Pedagogical Enhancements (Ideas)
+
+**Potential Features for Educational Use:**
+- Visual analysis overlays (grouping brackets, accent marks)
+- Pattern similarity calculator (Hamming distance)
+- Automatic detection of pattern properties (evenness, balance)
+- Export to notation software formats (MusicXML)
+- Collaborative editing (multiple students editing same pattern)
+- Pattern library with cultural/historical annotations
+- Built-in exercises with auto-checking
+- Video record function for presentations
+
+**Assessment Features:**
+- Pattern comparison tool (student vs. reference pattern)
+- Rubric-based evaluation (complexity, creativity, accuracy)
+- Progress tracking across assignments
+- Portfolio of exported patterns
+
+### Important Teaching Notes
+
+**For AI Assistants Helping with This Project:**
+- **Primary goal is EDUCATION, not production music**
+- Prioritize clarity and simplicity over advanced features
+- UI changes should support pedagogical objectives
+- Keep the interface focused on rhythm/pulse concepts
+- Documentation should explain WHY features exist pedagogically
+- New features should have clear learning objectives
+- Performance is less critical than accessibility and reliability
+- Pattern sharing and export are CRITICAL features (don't break)
+- The pulse row is essential for pedagogical grounding
+
+**When Adding Features, Consider:**
+- Does this help students understand rhythm theory?
+- Will this distract from core learning objectives?
+- Is it accessible to students without music tech background?
+- Can students document/share their work?
+- Does it work on basic school computers/Chromebooks?
+- Can it be demonstrated clearly in class?
+
+**Key Pedagogical Principles:**
+1. **See the pattern** (visual grid)
+2. **Hear the pattern** (immediate audio)
+3. **Manipulate the pattern** (interactive editing)
+4. **Share the pattern** (URLs, export)
+5. **Analyze the pattern** (text representation)
+6. **Compare patterns** (multiple tracks, shifting)
+
+This tool bridges theoretical understanding and practical musical experience, making abstract rhythmic concepts tangible and explorable.

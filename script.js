@@ -339,7 +339,7 @@
         return activeRows.map(row => {
             const labelCell = row.querySelector('.tracker-first-cell');
             const baseLabel = labelCell ? labelCell.textContent.trim() : `Track ${row.dataset.id || ''}`.trim();
-            const label = `${formatTrackLabel(baseLabel) || 'Track'}:`;
+            const label = `${baseLabel || 'Track'}:`;
             const cells = Array.from(row.querySelectorAll('.tracker-cell'));
             return padLabel(label) + buildRowPattern(cells, length);
         });
@@ -372,15 +372,6 @@
             values.push(cell && cell.classList.contains('tracker-enabled') ? 'X ' : '. ');
         }
         return values.join('').trimEnd();
-    }
-
-    function formatTrackLabel(label) {
-        if (!label) {
-            return '';
-        }
-        return label
-            .replace(/hihat-open/gi, 'hihat-o')
-            .replace(/hihat-closed/gi, 'hihat-cl');
     }
 
     function padLabel(label) {
