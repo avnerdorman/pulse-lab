@@ -21,7 +21,7 @@
         defaultPatternQueued: false
     };
 
-    const LABEL_WIDTH = 12;
+    const LABEL_WIDTH = 17;
     const LOADED_BPM_DEFAULT = 80;
     const LOADED_BPM_MIN = 20;
     const LOADED_BPM_MAX = 240;
