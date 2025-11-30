@@ -156,7 +156,11 @@ function NecklaceView() {
     };
 }
 
-// Export for use in script.js
+// Export for use in script.js (CommonJS for bundle) and browser (global)
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = NecklaceView;
+}
+// Also expose as global for browser usage
+if (typeof window !== 'undefined') {
+    window.NecklaceView = NecklaceView;
 }

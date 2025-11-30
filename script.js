@@ -84,12 +84,11 @@
         return binary.map(b => b === 1 ? 'X' : '.').join('');
     }
 
-    initialize();
-
-    // Initialize necklace view
-    const NecklaceView = require('./src/necklace-view.js');
-    const necklaceView = new NecklaceView();
+    // Necklace view variables (module loaded separately)
+    let necklaceView = null;
     let necklaceViewInitialized = false;
+
+    initialize();
 
     function initialize() {
         applyEmbedMode();
@@ -1124,6 +1123,12 @@
         // Open necklace view
         necklaceViewBtn.addEventListener('click', () => {
             if (!necklaceViewInitialized) {
+                // Lazy-load NecklaceView class
+                if (typeof NecklaceView === 'undefined') {
+                    console.error('NecklaceView class not loaded');
+                    return;
+                }
+                necklaceView = new NecklaceView();
                 const initialized = necklaceView.init('necklace-canvas');
                 if (!initialized) {
                     console.error('Failed to initialize necklace view');
