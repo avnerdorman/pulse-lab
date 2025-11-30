@@ -28,7 +28,11 @@ function NecklaceView() {
     };
 
     this.loadFromTracker = function(getPatternLengthFn) {
-        const rows = Array.from(document.querySelectorAll('#tracker-table .tracker-row[data-id]'));
+        // Try multiple selectors to find tracker rows
+        let rows = Array.from(document.querySelectorAll('#tracker-table .tracker-row[data-id]'));
+        if (rows.length === 0) {
+            rows = Array.from(document.querySelectorAll('.tracker-row[data-id]'));
+        }
         const length = getPatternLengthFn ? getPatternLengthFn() : 16;
 
         this.circles = rows.map((row, index) => {
@@ -45,8 +49,12 @@ function NecklaceView() {
                 length: length,
                 rowId: row.dataset.id
             };
+        }).filter(circle => {
+            // Only include rows that have at least one onset
+            return circle.pattern.some(onset => onset === true);
         });
 
+        console.log('Necklace view loaded:', this.circles.length, 'tracks');
         this.draw();
     };
 
