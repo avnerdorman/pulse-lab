@@ -76,6 +76,7 @@
                     <button id="play" type="button" class="icon-btn">Play</button>
                     <button id="pause" type="button" class="icon-btn">Pause</button>
                     <button id="stop" type="button" class="icon-btn">Stop</button>
+                    <button id="necklace-view-btn" type="button" class="icon-btn" title="View patterns as circles">⭘ Circle View</button>
                     <div class="transport-inline-controls">
                         <div class="tempo-control">
                             <label for="bpm">Tempo</label>
@@ -229,6 +230,23 @@
             <div class="modal-actions">
                 <button type="button" id="euclidean-apply">Apply</button>
                 <button type="button" id="euclidean-cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Necklace/Circle View Modal -->
+    <div id="necklace-modal" class="modal" style="display: none;">
+        <div class="modal-content necklace-modal-content">
+            <div class="necklace-header">
+                <h3>Circle View</h3>
+                <p>Visualize patterns as timelines on circles. Each track is shown as a necklace with onsets (filled dots) distributed around the cycle.</p>
+                <button type="button" id="necklace-close" class="close-btn" aria-label="Close circle view">&times;</button>
+            </div>
+            <div class="necklace-canvas-container">
+                <canvas id="necklace-canvas"></canvas>
+            </div>
+            <div class="necklace-footer">
+                <p class="necklace-hint">Tip: Use the shift buttons (← →) in the main grid to rotate patterns and see how the circles change.</p>
             </div>
         </div>
     </div>

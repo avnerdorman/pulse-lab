@@ -447,3 +447,540 @@ This application is designed as an **educational tool for teaching rhythm theory
 6. **Compare patterns** (multiple tracks, shifting)
 
 This tool bridges theoretical understanding and practical musical experience, making abstract rhythmic concepts tangible and explorable.
+
+---
+
+## Euclidean Rhythms & Maximally Even Distributions
+
+### Mathematical Foundation
+
+**Euclidean rhythms** are maximally even distributions of k onsets across n time steps, generated using the Bjorklund algorithm (originally designed for neutron timing in nuclear physics). The notation **E(k,n)** describes a pattern with:
+- **k** = number of onsets (pulses to distribute)
+- **n** = total steps in the cycle (measure length)
+
+**Maximally even** means the onsets are distributed as evenly as possible:
+- All inter-onset intervals differ by at most 1 step
+- Mathematically optimal spacing given the constraints
+- Produces patterns with strong structural coherence
+
+### Why This Matters Pedagogically
+
+**1. Cross-Cultural Musical Ubiquity**
+Euclidean patterns appear independently in musical traditions worldwide:
+- **E(3,8)** = Tresillo (Cuban, North African, Middle Eastern)
+- **E(5,8)** = Cinquillo (Cuban habanera, West African timelines)
+- **E(5,12)** = York-Samai pattern (Arab classical music)
+- **E(7,12)** = West African bell pattern
+- **E(5,16)** = Bossa nova clave
+- **E(7,16)** = Brazilian samba
+
+This demonstrates that **mathematical structure underlies musical intuition** across cultures. Students discover that patterns they hear in diverse music share a common mathematical property.
+
+**2. Connection to Timeline Theory (Toussaint)**
+Euclidean rhythms are a subset of timeline patterns studied by Godfried Toussaint:
+- Timelines are cyclical, repeating rhythmic patterns that organize music
+- They function as reference structures (like the pulse row in this app)
+- Maximally even timelines have special perceptual salience
+- Rotation creates related but distinct patterns (same intervals, different starting point)
+
+**3. Pre-Notational Rhythm Understanding**
+Euclidean patterns help students:
+- Think about rhythm as **spacing** rather than durations
+- Understand cyclic structure (no inherent "beginning")
+- Explore patterns without pitch/notation complexity
+- Connect mathematical concepts to musical perception
+
+### Pedagogical Sequence for Teaching Euclidean Rhythms
+
+**Stage 1: Discovery (Experimentation)**
+- Students experiment with Euclidean generator
+- Try different k values at fixed n (e.g., n=16)
+- Listen and compare E(3,16), E(5,16), E(7,16), E(9,16)
+- Question: "Which ones sound more even? Why?"
+
+**Stage 2: Pattern Recognition (Cultural Context)**
+- Introduce cultural examples after students have heard patterns
+- "The pattern you just created as E(5,8) is called cinquillo in Cuban music"
+- Show how same mathematical structure appears in different cultures
+- Play recorded examples from various traditions
+
+**Stage 3: Mathematical Analysis**
+- Calculate inter-onset intervals for patterns
+- E(5,8) = [2,1,2,2,1] (reading between X marks)
+- Notice that intervals only differ by 1
+- Compare to non-Euclidean patterns (irregular spacing)
+
+**Stage 4: Rotation & Phase**
+- Use shift-left/shift-right to rotate patterns
+- Discover that rotations are musically related
+- E(5,16) has 16 rotations, some more common than others
+- Connect to timeline theory: patterns can start anywhere in cycle
+
+**Stage 5: Layering & Polyrhythm**
+- Create Euclidean patterns on multiple tracks
+- E(3,16) + E(5,16) + E(7,16) simultaneously
+- Explore cross-rhythms and metric dissonance
+- Understand how simple patterns create complexity
+
+**Stage 6: Composition & Application**
+- Students create pieces using only Euclidean patterns
+- Experiment with different sample sets (acoustic vs. electronic)
+- Layer, shift, and combine patterns
+- Export and document their compositional choices
+
+### Key Insights for Course Pages
+
+**Why the Algorithm Doesn't Force Pulse 1 Start:**
+The Bjorklund algorithm produces patterns in their "natural" form—the mathematically optimal distribution. Some start with an onset, others with a rest. This is pedagogically valuable because:
+- It shows patterns are **cyclical** with no privileged starting point
+- Students must think beyond "downbeat orientation"
+- Connects to necklace theory (rotations of the same structure)
+- Encourages use of shift buttons to explore rotations
+
+**Connecting to "Introduction to Timelines" Material:**
+Your intro-to-timelines.html already introduces:
+- Binary representation (X . . X . X or 1 0 1 0)
+- Onset lists [0, 3, 6, 10, 13]
+- Circle representations (geometry)
+- Operations: rotation, complement
+
+The Euclidean generator extends this by:
+- Automatically creating maximally even patterns
+- Demonstrating algorithmic rhythm generation
+- Showing that mathematical structure = musical structure
+- Providing examples for rotation/complement exploration
+
+**Assessment Ideas:**
+
+*Analysis Assignment:*
+1. Generate E(5,12) and export the pattern
+2. List the inter-onset intervals
+3. Explain why this is "maximally even"
+4. Find a musical example using this pattern
+5. Create 3 rotations and describe their different "feels"
+
+*Composition Assignment:*
+1. Create a 3-layer piece using only Euclidean patterns
+2. At least one pattern must be E(k,n) where k and n are coprime
+3. Use rotation to create variation
+4. Export and document which patterns you used
+5. Explain your compositional choices
+
+*Research Assignment:*
+1. Pick a cultural music tradition (Afro-Cuban, West African, Arab, Brazilian)
+2. Find a traditional timeline pattern from that culture
+3. Determine if it's Euclidean (or close to it)
+4. Recreate it in the app and explore variations
+5. Present findings with audio examples
+
+### Vocabulary for Course Pages
+
+**Essential Terms:**
+- **Euclidean rhythm**: Maximally even distribution of k onsets over n steps
+- **Maximally even**: All intervals differ by at most 1
+- **Timeline**: Repeating rhythmic pattern that organizes a musical cycle
+- **Onset**: The attack point of a sound (the X in the pattern)
+- **Inter-onset interval (IOI)**: The distance between consecutive onsets
+- **Rotation**: Shifting a pattern by n positions (cyclic permutation)
+- **Coprime**: Two numbers with no common divisors (e.g., 5 and 8)
+
+**Advanced Concepts:**
+- **Necklace**: A pattern viewed as a cycle (all rotations considered equivalent)
+- **Complement**: Inverting X ↔ . (rests become onsets, vice versa)
+- **Evenness**: How uniformly onsets are distributed across the cycle
+- **Bjorklund algorithm**: Efficient method for generating Euclidean patterns
+- **Phase relationship**: How two patterns align temporally
+
+### Connection to Other Course Topics
+
+**Post-Tonal Set Theory Parallels:**
+- Euclidean rhythms are to time what maximally even pitch sets are to pitch
+- E(5,12) rhythm ≈ pentatonic scale in pitch (both maximally even)
+- E(7,12) rhythm ≈ diatonic scale in pitch
+- Rotation in rhythm = transposition in pitch
+- Complement in rhythm = complement in pitch
+
+**Metric Hierarchy:**
+- Euclidean patterns create implied metric layers
+- E(3,16) groups 16 pulses into 3+3+3+3+2+2 (or similar)
+- Students discover grouping through interval analysis
+- Connects to additive meter (Bartók, Balkan music)
+
+**Minimalism & Process Music:**
+- Steve Reich's phase music uses rotation of identical patterns
+- Euclidean patterns provide clear structure for phase experiments
+- Students can recreate Reich-like textures using shift buttons
+- Algorithmic generation connects to minimalist compositional techniques
+
+### Sample Lesson Plan Outline
+
+**Week 2 Wednesday: Introduction to Timelines** (existing material)
+- What is a timeline? (repeating cyclical pattern)
+- Three representations: binary, onset list, circle
+- Operations: rotation, complement
+- Interactive tool: circle visualizer
+- Embedded Pulse Lab for experimentation
+
+**Week 3 Monday: Euclidean Rhythms** (suggested new page)
+- Mathematical definition: E(k,n) = maximally even distribution
+- Historical context: Bjorklund algorithm from physics
+- Musical ubiquity: cross-cultural examples
+- Hands-on: Generate and compare E(3,8), E(5,8), E(7,8)
+- Assignment: Create piece using only Euclidean patterns
+
+**Week 3 Wednesday: Timeline Analysis** (suggested new page)
+- Inter-onset interval calculation
+- Evenness measurement
+- Pattern comparison (Euclidean vs. non-Euclidean)
+- Cultural examples deep dive
+- Assignment: Analyze traditional timeline from chosen culture
+
+**Week 4: Polyrhythm & Layering** (extension)
+- Layering Euclidean patterns
+- Coprime relationships (E(5,12) + E(7,12))
+- Metric dissonance and tension
+- Steve Reich phase techniques
+- Assignment: Multi-track Euclidean composition
+
+### Recommended Readings for Students
+
+**Accessible:**
+- Toussaint, "The Euclidean Algorithm Generates Traditional Musical Rhythms" (paper)
+- Toussaint, "The Geometry of Musical Rhythm" (book, Chapters 1-3)
+- Demaine et al., "The Distance Geometry of Music" (paper, introduction)
+
+**Advanced:**
+- Pressing, "Cognitive Complexity and the Structure of Musical Patterns" (1999)
+- London, "Hearing in Time" (book, on meter perception)
+- Rahn, "Turning the Analysis Around: African-Derived Rhythms" (1996)
+
+**Online Resources:**
+- Svg Rhythm (online Euclidean rhythm generator with audio)
+- The Infinite Drum Machine (Google Creative Lab)
+- Circular rhythm visualization tools
+
+### Future Enhancement Ideas
+
+**For Course Page Integration:**
+1. **Embedded Euclidean Generator**: Embed the Pulse Lab with Euclidean feature in course pages
+2. **Pattern Library**: Curated collection of cultural timeline patterns with context
+3. **Visual Analysis Tool**: Overlay interval annotations on patterns
+4. **Auto-Analysis**: Calculate and display inter-onset intervals automatically
+5. **Comparison Mode**: Side-by-side pattern comparison tool
+6. **Notation Export**: Generate traditional music notation from patterns
+
+**Interactive Exercises:**
+1. **Pattern Matching**: "Which E(k,n) matches this audio?"
+2. **Culture Quiz**: "Identify the cultural origin of this timeline"
+3. **Interval Calculation**: Auto-check student interval analysis
+4. **Rotation Recognition**: "Which rotation of E(5,8) is this?"
+
+This pedagogical framework connects mathematical concepts, cultural context, and hands-on experimentation—making abstract rhythm theory tangible and relevant to students' musical understanding.
+
+---
+
+## Circle View / Necklace Representation
+
+### Mathematical & Visual Foundation
+
+The **circle view** (also called necklace representation) displays rhythmic patterns as points distributed evenly around a circle. This geometric representation has profound pedagogical and theoretical significance:
+
+**Circle Geometry:**
+- n pulses are placed equidistant around the circle's circumference
+- Onsets (attacks) appear as filled dots
+- Rests appear as empty dots
+- Pulse 1 starts at 12 o'clock (top of circle)
+- Pulses proceed clockwise around the cycle
+
+**Why This Representation Matters:**
+1. **Reveals cyclic structure**: Patterns have no inherent beginning or end
+2. **Makes rotation visible**: Shifting the pattern is literally rotating the circle
+3. **Shows symmetry**: Geometric properties become visually apparent
+4. **Connects to necklace theory**: Patterns are equivalent under rotation
+5. **Parallels pitch-class clock**: Same visual model as 12-tone pitch-class space
+
+### Pedagogical Applications
+
+#### 1. Teaching Rotation as Transformation
+
+**Visual Understanding:**
+When students use the shift-left (←) or shift-right (→) buttons in the grid view, they can immediately see the effect in circle view:
+- The onset pattern rotates around the circle
+- The spacing between onsets remains constant
+- Different rotations can sound quite different despite same interval structure
+
+**Learning Sequence:**
+1. Create a simple pattern (e.g., E(5,16))
+2. Open circle view to see geometric distribution
+3. Use shift buttons and watch circle rotate
+4. Notice: **same shape, different starting point**
+5. Listen: how does the "feel" change with different rotations?
+
+**Key Insight:** Rotation is a **geometric transformation** that preserves interval structure but changes the relationship to the reference pulse (pulse 1).
+
+#### 2. Visualizing Maximally Even Distributions
+
+**Euclidean Patterns in Circle View:**
+- E(5,12): Five dots evenly spread around circle (like pentagon inscribed in circle)
+- E(7,12): Seven dots evenly spread (like heptagon)
+- E(5,16): Five dots distributed with maximum evenness possible in 16 steps
+
+**Student Discovery Activity:**
+1. Generate E(5,12) using Euclidean generator
+2. Open circle view
+3. Observe how dots are "almost evenly spaced" (can't be perfect with 5 into 12)
+4. Compare to E(5,10) - see perfect pentagon
+5. Question: "Why are some distributions perfectly even and others not?"
+6. Answer: Depends on whether k divides n evenly
+
+**Mathematical Connection:**
+- When k and n are coprime (share no common factors), patterns tend to be more "interesting"
+- E(5,12) is maximally even but not perfectly even
+- This connects to pitch: pentatonic scale (5 notes in 12) has same property
+
+#### 3. Understanding Necklace Equivalence
+
+**Necklace Theory (Combinatorics):**
+A "necklace" in mathematics is a pattern where rotations are considered equivalent. The circle view makes this concept concrete:
+
+**Example:**
+- E(3,8) = [X . . X . . X .]
+- This pattern has 8 rotations
+- But some rotations might produce the same necklace
+- Circle view shows: the pattern is the same "shape" from any starting point
+
+**Classroom Activity:**
+1. Create asymmetric pattern: [X . X . . . X . . .]
+2. Open circle view - see the shape
+3. Use shift buttons to create all rotations
+4. Ask: "Are any rotations identical? Why or why not?"
+5. Discover: only symmetric patterns have rotation-invariant forms
+
+#### 4. Comparing Patterns Across Tracks
+
+**Multi-Track Circle View:**
+The circle view shows ALL active tracks simultaneously as separate circles in a grid:
+
+**Pedagogical Value:**
+- **Visual polyrhythm**: See how different patterns relate geometrically
+- **Density comparison**: E(3,16) vs E(7,16) - visually sparse vs. dense
+- **Phase relationships**: Tracks with same pattern but different rotations
+- **Complementary patterns**: Pattern + its complement = full circle
+
+**Analysis Assignment:**
+1. Create 3 tracks: E(3,16), E(5,16), E(7,16)
+2. Open circle view
+3. Sketch the three circles
+4. Calculate inter-onset intervals for each
+5. Describe: How do the geometric distributions differ?
+6. Listen: How do density differences affect perception?
+
+#### 5. Connection to Cultural Timeline Notation
+
+**Toussaint's Box Notation:**
+Godfried Toussaint uses circle diagrams extensively in "The Geometry of Musical Rhythm." The app's circle view matches this scholarly representation:
+
+**Cultural Examples in Circle View:**
+- **Tresillo** [X . . X . . X .] - three evenly spaced dots in 8 (E(3,8))
+- **Son Clave** [X . . X . . X . . . X . . . . .] - see the 3+2 grouping visually
+- **Bossa Clave** - complex spacing becomes clear in circle form
+
+**Research Activity:**
+1. Find a traditional timeline pattern from world music
+2. Enter it in the grid
+3. View in circle form
+4. Sketch the distribution
+5. Determine if it's Euclidean (maximally even)
+6. Compare to other patterns from same tradition
+
+### Visual Learning Advantages
+
+**Why Circle View Enhances Understanding:**
+
+1. **Spatial Memory**: Visual geometric shapes are easier to remember than grid patterns
+2. **Pattern Recognition**: Symmetries and regularities become immediately apparent
+3. **Rotation Intuition**: Circular motion is more intuitive than left/right shifts
+4. **Scale Independence**: Same visual representation works for any cycle length
+5. **Connection to Clock**: Familiar metaphor (rhythm as cycles of time)
+
+### Advanced Concepts Made Visible
+
+#### Metric Hierarchy
+Different groupings of the same pulse stream appear as different geometric divisions:
+- 4 groups of 4 (16 pulses) = square inscribed in circle
+- 3 groups of 4 (12 pulses) = triangle with subdivisions
+- Visual hierarchy emerges from geometric relationships
+
+#### Aksak Meters (Irregular Meters)
+Balkan rhythms with irregular groupings (2+2+3, 3+2+2, etc.):
+- Each grouping creates different visual shape
+- Circle view shows why some groupings "feel" more stable
+- Geometric balance corresponds to rhythmic balance
+
+#### Complement Visualization
+The complement of a pattern (X ↔ .) fills in the "empty spaces":
+- Original pattern: Some dots around circle
+- Complement: Dots in all remaining positions
+- Together: Complete circle (all positions filled)
+
+### Teaching Sequence for Circle View
+
+**Week 1: Introduction**
+- Show simple pattern in both grid and circle
+- Explain: circle shows same information, different way
+- Practice: students sketch circle representations by hand
+- Connect: pulse stream as circular timeline
+
+**Week 2: Rotation**
+- Use shift buttons, observe circle view changes
+- Create all rotations of a pattern
+- Identify which rotations "sound best" at tempo
+- Understand: rotation preserves structure
+
+**Week 3: Euclidean Patterns**
+- Generate E(k,n) patterns for various k and n
+- Open circle view to see geometric distributions
+- Compare even vs. uneven spacing
+- Discover: mathematical patterns in music
+
+**Week 4: Multi-Pattern Analysis**
+- Layer multiple patterns
+- View all circles simultaneously
+- Analyze geometric relationships
+- Compose using visual complement (one pattern fills another's gaps)
+
+**Week 5: Cultural Timelines**
+- Study traditional patterns (clave, gankogui, etc.)
+- Visualize in circle form
+- Compare geometric properties
+- Research: why do similar shapes appear across cultures?
+
+### Assessment Using Circle View
+
+**Visual Analysis Assignment:**
+1. Given: Three circle diagrams of patterns
+2. Task: Convert to binary notation (X . X .)
+3. Calculate: Inter-onset intervals
+4. Determine: Which is Euclidean?
+5. Create: Grid representation from circle diagram
+
+**Composition with Geometric Constraints:**
+1. Compose 4-track piece
+2. Requirement: One track must be symmetric in circle view
+3. Requirement: Two tracks must be rotations of each other
+4. Requirement: One track must be complement of another
+5. Export: Both grid and circle representations
+6. Explain: How geometric constraints influenced your composition
+
+**Pattern Recognition Quiz:**
+1. Listen to pattern (without seeing it)
+2. Sketch what the circle view would look like
+3. Verify using app
+4. Reflect: What aural cues helped you visualize the geometry?
+
+### Connection to Pitch-Class Theory (Advanced)
+
+**For Post-Tonal Theory Courses:**
+
+The circle view creates a direct parallel between rhythm and pitch:
+
+| Rhythm (Time) | Pitch (Frequency) |
+|---------------|-------------------|
+| 12 or 16 pulses | 12 chromatic pitches |
+| Timeline pattern | Pitch-class set |
+| Rotation | Transposition |
+| E(5,12) rhythm | Pentatonic scale |
+| E(7,12) rhythm | Diatonic scale |
+| Complement | Set complement |
+| Necklace | Prime form |
+
+**Unified Theory Assignment:**
+1. Create E(7,12) rhythm pattern
+2. Observe circle view (7 dots in 12 positions)
+3. Compare to C major scale (7 notes in 12 pitches)
+4. Notice: **same geometric structure**
+5. Question: Why does "maximally even" matter in both domains?
+6. Answer: Perceptual balance, variety without chaos, mathematical beauty
+
+### Practical Tips for Teaching with Circle View
+
+**Introducing the Feature:**
+- Start with grid view (familiar tracker interface)
+- After students comfortable with patterns, introduce circle
+- Present as "another way to see the same thing"
+- Use analogy: like seeing building from ground vs. aerial view
+
+**Common Student Confusions:**
+1. **"Where does the pattern start?"**
+   Answer: Anywhere! That's the point—it's a cycle.
+
+2. **"Why does pulse 1 start at the top?"**
+   Answer: Convention (like 12 o'clock on a clock). We could start anywhere.
+
+3. **"Is clockwise the same as left-to-right in the grid?"**
+   Answer: Yes! Clockwise = time moving forward = left-to-right in grid.
+
+4. **"Why do the dots look uneven when it's supposed to be 'maximally even'?"**
+   Answer: "Maximally even" means intervals differ by at most 1, not that spacing is perfectly equal.
+
+**Effective Demonstrations:**
+- Project circle view during playback - watch blue highlight rotate
+- Show rotation: click shift button, watch circle spin
+- Compare patterns: E(3,16), E(5,16), E(7,16), E(9,16) side by side
+- Create complement: original + complement = complete circle
+
+### Future Enhancements
+
+**Interactive Circle View (Potential Features):**
+1. **Click to edit**: Click dots to toggle onsets in circle view
+2. **Rotation slider**: Continuous rotation control
+3. **Interval labels**: Show inter-onset intervals on circle
+4. **Symmetry detection**: Highlight symmetry axes
+5. **Animation**: Show pattern evolution through rotations
+6. **Comparison mode**: Overlay two patterns on same circle
+7. **Export circle**: Save as SVG for papers/presentations
+
+**Advanced Visualizations:**
+1. **3D helix view**: Spiral showing pattern over multiple cycles
+2. **Phase animation**: Two patterns gradually shifting phase
+3. **Polygon inscriptions**: Show k-gons for E(k,n) patterns
+4. **Color coding**: Different instruments in different colors
+
+### Research Connections
+
+**Scholarly References for Circle Representations:**
+
+1. **Toussaint (2013)** - "The Geometry of Musical Rhythm"
+   Extensive use of circle diagrams for timeline analysis
+
+2. **Demaine et al. (2009)** - "The Distance Geometry of Music"
+   Mathematical analysis of rhythmic patterns using geometric representations
+
+3. **Pressing (1983)** - "Cognitive Isomorphisms in Music"
+   Circular representations in cognitive rhythm theory
+
+4. **Rahn (1996)** - "Turning the Analysis Around"
+   African-derived rhythms analyzed through circular notation
+
+**Student Research Projects:**
+- Catalog traditional rhythms and their circle representations
+- Analyze symmetry properties of cultural timelines
+- Compare aural vs. visual pattern recognition using circle view
+- Investigate why Euclidean patterns appear cross-culturally
+
+### Conclusion: Why Circle View Matters
+
+The circle view is not just a "nice visualization"—it's a **fundamental pedagogical tool** that:
+
+1. **Makes abstract concepts concrete** - rotation becomes geometric transformation
+2. **Connects rhythm to pitch** - unified set-theoretic approach
+3. **Reveals cultural universals** - maximally even distributions across traditions
+4. **Enables visual analysis** - students can "see" what they hear
+5. **Supports inquiry-based learning** - geometric patterns invite exploration
+
+When combined with the grid view (linear time) and the Euclidean generator (algorithmic creation), the circle view completes a **three-way representation system**:
+- **Grid** = how we notate and perform
+- **Algorithm** = how we generate and analyze
+- **Circle** = how we understand and transform
+
+This multi-modal approach supports diverse learning styles and creates deeper understanding of rhythmic structure than any single representation alone.

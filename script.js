@@ -13,6 +13,9 @@
     const importInput = document.getElementById('import-pattern-input');
     const resetPatternBtn = document.getElementById('reset-pattern-btn');
     const clearPatternBtn = document.getElementById('clear-pattern-btn');
+    const necklaceViewBtn = document.getElementById('necklace-view-btn');
+    const necklaceModal = document.getElementById('necklace-modal');
+    const necklaceCloseBtn = document.getElementById('necklace-close');
 
     const state = {
         pendingPatternQueue: [],
@@ -83,6 +86,11 @@
 
     initialize();
 
+    // Initialize necklace view
+    const NecklaceView = require('./src/necklace-view.js');
+    const necklaceView = new NecklaceView();
+    let necklaceViewInitialized = false;
+
     function initialize() {
         applyEmbedMode();
         setupExportPanel();
@@ -91,6 +99,7 @@
         setupResetControl();
         setupClearControl();
         setupEuclideanModal();
+        setupNecklaceView();
         applyInitialParams();
         ensureDefaultHatPattern();
         refreshExportText();
@@ -1105,5 +1114,90 @@
             queuePatternSet(patternSet);
         }
         showMessage(`Applied E(${pulses},${steps}) pattern`);
+    }
+
+    function setupNecklaceView() {
+        if (!necklaceViewBtn || !necklaceModal || !necklaceCloseBtn) {
+            return;
+        }
+
+        // Open necklace view
+        necklaceViewBtn.addEventListener('click', () => {
+            if (!necklaceViewInitialized) {
+                const initialized = necklaceView.init('necklace-canvas');
+                if (!initialized) {
+                    console.error('Failed to initialize necklace view');
+                    return;
+                }
+                necklaceViewInitialized = true;
+            }
+
+            // Load current patterns from tracker
+            necklaceView.loadFromTracker(getPatternLength);
+            necklaceModal.style.display = 'flex';
+
+            // Sync with current playback state
+            const app = window.simpleTrackerApp;
+            if (app && app.scheduler && app.scheduler.playing) {
+                necklaceView.setPlaying(true);
+            }
+        });
+
+        // Close necklace view
+        necklaceCloseBtn.addEventListener('click', () => {
+            necklaceModal.style.display = 'none';
+        });
+
+        // Close on outside click
+        necklaceModal.addEventListener('click', event => {
+            if (event.target === necklaceModal) {
+                necklaceModal.style.display = 'none';
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && necklaceModal.style.display !== 'none') {
+                necklaceModal.style.display = 'none';
+            }
+        });
+
+        // Refresh necklace view when patterns change
+        trackerParent.addEventListener('click', event => {
+            const cell = event.target.closest('.tracker-cell');
+            if (cell && necklaceViewInitialized && necklaceModal.style.display !== 'none') {
+                // Delay to let the cell state update
+                setTimeout(() => {
+                    necklaceView.refresh(getPatternLength);
+                }, 50);
+            }
+        });
+
+        // Update necklace view during playback
+        document.addEventListener('tracker:pulse', event => {
+            if (necklaceViewInitialized && necklaceModal.style.display !== 'none') {
+                necklaceView.setCurrentPulse(event.detail.pulseIndex);
+            }
+        });
+
+        // Update playing state
+        document.addEventListener('tracker:play', () => {
+            if (necklaceViewInitialized && necklaceModal.style.display !== 'none') {
+                necklaceView.setPlaying(true);
+            }
+        });
+
+        document.addEventListener('tracker:stop', () => {
+            if (necklaceViewInitialized && necklaceModal.style.display !== 'none') {
+                necklaceView.setPlaying(false);
+                necklaceView.setCurrentPulse(0);
+            }
+        });
+
+        document.addEventListener('tracker:pause', () => {
+            if (necklaceViewInitialized && necklaceModal.style.display !== 'none') {
+                necklaceView.setPlaying(false);
+            }
+        });
     }
 })();
