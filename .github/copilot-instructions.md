@@ -931,7 +931,65 @@ The circle view creates a direct parallel between rhythm and pitch:
 
 ### Future Enhancements
 
-**Interactive Circle View (Potential Features):**
+**Contextual Help & Course Integration:**
+1. **Help tooltips (❓ balloons)**: Add tooltip icons next to key features that explain concepts
+   - Example locations:
+     * "Circle View" button → "What is circle view? Why does it matter?"
+     * "Euclidean..." in row options → "What are Euclidean rhythms?"
+     * "Every N" buttons → "What does this create?"
+     * Measure length selector → "What is a measure in this context?"
+     * BPM control → "How does tempo affect perception?"
+   - Tooltip content could include:
+     * Brief explanation (1-2 sentences)
+     * Link to relevant course page (e.g., "Learn more: Introduction to Timelines")
+     * Example: "Try E(5,16) to hear a bossa nova pattern"
+
+2. **Lesson linking system**:
+   - Configuration file mapping features to course URLs
+   - Example: `{ "circleView": "https://theory-iv-lab/intro-to-timelines.html#circle-representation" }`
+   - Allows instructor to customize links for their own course site
+   - Links could open in new tab or embedded modal with course content
+
+3. **Embedded mode enhancements**:
+   - When embedded in course pages, detect context and show relevant help
+   - Example: If embedded on "Euclidean Rhythms" page, highlight Euclidean generator
+   - Could pass URL parameters like `?feature=euclidean&lesson=week3` to customize help
+
+4. **Progressive disclosure**:
+   - First-time users see more help; experienced users see less
+   - "Show me around" guided tour option
+   - Dismissible tooltips that don't reappear after user closes them
+
+5. **Conceptual scaffolding**:
+   - Color-code or badge features by difficulty level
+   - "Basic" → "Intermediate" → "Advanced"
+   - Helps students know where to start exploring
+
+**Pedagogical Considerations:**
+- **Balance**: Help should support learning without cluttering interface
+- **Opt-in vs. Opt-out**: Consider making help toggleable (help icon in corner)
+- **Mobile-friendly**: Tooltips must work on touch devices
+- **Accessibility**: Ensure help content is screen-reader compatible
+- **Maintenance**: Links must stay valid as course site evolves
+
+**Implementation Ideas:**
+- Use `title` attributes for simple browser tooltips (quick, no code)
+- Use library like Tippy.js for rich, styled tooltips with HTML
+- Store help content in separate JSON file for easy instructor customization
+- Add `data-help-topic` attributes to elements for flexible targeting
+
+**Example Help Content:**
+
+*Circle View button tooltip:*
+"The circle view shows patterns as dots around a circle, revealing their geometric structure. This makes rotation and symmetry easy to see. [Learn more: Week 2 - Introduction to Timelines]"
+
+*Euclidean generator tooltip:*
+"Euclidean rhythms (E(k,n)) distribute k beats as evenly as possible across n steps. These patterns appear in music worldwide! [Learn more: Week 3 - Euclidean Rhythms] [Try: E(5,16) for bossa nova]"
+
+*Rotation arrows tooltip (in circle view):*
+"Click arrows to rotate the pattern. Notice how the spacing stays the same but the 'feel' changes relative to pulse 1. [Learn more: Rotation as Transformation]"
+
+**Interactive Circle View (Other Features):**
 1. **Click to edit**: Click dots to toggle onsets in circle view
 2. **Rotation slider**: Continuous rotation control
 3. **Interval labels**: Show inter-onset intervals on circle
