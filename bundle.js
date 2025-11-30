@@ -2143,6 +2143,8 @@ function trackerTable() {
         str += `<button type="button" class="track-options-item" data-row-id="${rowID}" data-every="4" role="menuitem">Every 4</button>`;
         str += `<button type="button" class="track-options-item" data-row-id="${rowID}" data-every="5" role="menuitem">Every 5</button>`;
         str += `<hr class="track-options-sep">`;
+        str += `<button type="button" class="track-options-item euclidean-trigger" data-row-id="${rowID}" role="menuitem">Euclidean...</button>`;
+        str += `<hr class="track-options-sep">`;
         str += `<button type="button" class="track-options-item" data-row-id="${rowID}" data-clear="1" role="menuitem">Clear row</button>`;
         str += `</div>`;
         str += `</div>`;

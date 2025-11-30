@@ -640,3 +640,132 @@ button.full-width {
 .embedded .control-grid.compact input,
 .embedded .control-grid.compact select,
 .embedded .control-grid.compact label { font-size: 0.9rem; }
+
+/* Euclidean Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 12px;
+    padding: 24px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.modal-content h3 {
+    margin-top: 0;
+    color: #f8fafc;
+    font-size: 1.3rem;
+}
+
+.modal-content p {
+    color: #cbd5e1;
+    margin: 8px 0 16px;
+}
+
+.euclidean-inputs {
+    display: flex;
+    gap: 16px;
+    margin: 16px 0;
+}
+
+.euclidean-inputs label {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    color: #cbd5e1;
+    font-size: 0.95rem;
+}
+
+.euclidean-inputs input {
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    background-color: rgba(30, 41, 59, 0.5);
+    color: #f8fafc;
+    font-size: 16px;
+}
+
+.euclidean-inputs input:focus {
+    outline: none;
+    border-color: rgba(59, 130, 246, 0.6);
+    background-color: rgba(30, 41, 59, 0.7);
+}
+
+.euclidean-inputs input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background-color: rgba(30, 41, 59, 0.3);
+}
+
+.euclidean-presets {
+    margin: 16px 0;
+}
+
+.euclidean-presets p {
+    color: #cbd5e1;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+.preset-btn {
+    margin: 4px;
+    padding: 6px 12px;
+    background-color: rgba(59, 130, 246, 0.2);
+    border: 1px solid rgba(59, 130, 246, 0.4);
+    border-radius: 6px;
+    color: #93c5fd;
+    cursor: pointer;
+    font-family: monospace;
+    font-size: 0.95rem;
+}
+
+.preset-btn:hover {
+    background-color: rgba(59, 130, 246, 0.3);
+    border-color: rgba(59, 130, 246, 0.6);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.modal-actions button {
+    padding: 8px 20px;
+    border-radius: 6px;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    background-color: rgba(59, 130, 246, 0.2);
+    color: #f8fafc;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.modal-actions button:hover {
+    background-color: rgba(59, 130, 246, 0.3);
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.modal-actions button#euclidean-apply {
+    background-color: rgba(59, 130, 246, 0.4);
+    border-color: rgba(59, 130, 246, 0.6);
+}
+
+.modal-actions button#euclidean-apply:hover {
+    background-color: rgba(59, 130, 246, 0.5);
+}

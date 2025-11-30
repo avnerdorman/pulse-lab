@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introduction to Timelines</title>
+
+    <link rel="stylesheet" href="../../assets/css/course-styles.css">
+</head>
+
+<body>
+<div class="container">
+
+    <header>
+        <h1>Introduction to Timelines</h1>
+    </header>
+
+    <div class="credit">
+        <p><strong>Course:</strong> Music Theory IV</p>
+        <!-- <p><strong>Adapted by:</strong> Dr. Avner Dorman</p> -->
+        <p><strong>Week 2 – Wednesday</strong></p>
+    </div>
+
+    <!-- SECTION 1: What a Timeline Is -->
+<section id="intro">
+    <h2>What Is a Timeline?</h2>
+
+    <p>On Monday we explored how pulse, beat, division, and grouping work together to create 
+    meter. Today we turn to a different organizing structure found in many musical cultures 
+    around the world: the <strong>timeline</strong>.</p>
+
+    <div class="definition">
+        A <strong>timeline</strong> is a distinctive, repeating rhythmic pattern that spans one full cycle 
+        of steady pulses. It repeats throughout the music and acts as a guiding structure—helping 
+        performers feel the cycle and stay coordinated.
+    </div>
+
+    <p>Timelines are not just any ostinatos. They are memorable, easily recognized patterns that 
+    function as the “reference line” of the music. In many traditions they serve as a regulator or 
+    heartbeat, signaling the underlying cycle to the ensemble.</p>
+
+    <p>Because timelines repeat cyclically, they can be described very simply by:</p>
+    <ul>
+        <li>The total number of <strong>pulses</strong> in the cycle</li>
+        <li>The <strong>onset positions</strong>—the pulses where attacks occur</li>
+    </ul>
+
+    <p>This makes timelines ideal for geometric representations (such as circles) and mathematical 
+    descriptions (such as inter-onset intervals), which we will explore today.</p>
+</section>
+
+    <!-- SECTION 2: Representing a Timeline -->
+    <section id="representations">
+        <h2>Three Ways to Represent a Timeline</h2>
+
+        <!-- <h3>1. Binary (X . . X . X …)</h3>
+        <p>A timeline can be written as a string of symbols:</p>
+        <ul>
+            <li><strong>X</strong> means an onset</li>
+            <li><strong>.</strong> means a rest</li>
+        </ul>
+
+        <p>Example (16 pulses): <code>X . X . . X . . . X . . X . . .</code></p> -->
+
+<h3>1. Binary Representation (X . . X . X … / 1 0 1 0 …)</h3>
+
+<p>A timeline can be written as a simple row of symbols—one for each pulse in the cycle.  
+There are two equivalent ways to do this:</p>
+
+<ul>
+    <li><strong>X</strong> = an onset (a sounded pulse)</li>
+    <li><strong>.</strong> = a silence</li>
+</ul>
+
+<p>Example (16 pulses):  
+<code>X . X . . X . . . X . . X . . .</code></p>
+
+<p>The same pattern can also be written using numbers:</p>
+
+<ul>
+    <li><strong>1</strong> = an onset</li>
+    <li><strong>0</strong> = a silence</li>
+</ul>
+
+<p>Binary form (same 16-pulse example):  
+<code>1 0 1 0 0 1 0 0 0 1 0 0 1 0 0 0</code></p>
+
+<div class="definition">
+    Both notations describe the same structure.  
+    <strong>X ↔ 1</strong> and <strong>. ↔ 0</strong>.
+</div>
+
+<p>This representation is compact, unambiguous, and useful when we connect rhythmic structure 
+to geometry or later mathematical ideas.</p>
+
+<h3>2. Onset list</h3>
+        <p>The same pattern can be represented simply by listing the pulse numbers with attacks:</p>
+        <p><code>[0, 2, 5, 9, 12]</code></p>
+
+        <h3>3. Circle representation (geometry)</h3>
+        <p>We can place each pulse evenly around a circle.  
+           This makes it easy to see symmetry, spacing, and operations like rotation.</p>
+
+        <!-- Circle drawing tool -->
+        <div id="timeline-canvas-container">
+            <h3>Try It: Draw Your Own Timeline</h3>
+            <label>Number of pulses:</label>
+            <input type="text" id="pulses" value="16">
+            <br>
+            <label>Onsets (comma-separated):</label>
+            <input type="text" id="onsets" value="0,3,6,10,13">
+            <br>
+            <canvas id="timelineCanvas" width="500" height="500"></canvas>
+            <div style="margin-top: 15px;">
+                <button onclick="drawCircle()">Generate</button>
+                <button onclick="rotateCW()">Rotate +1</button>
+                <button onclick="rotateCCW()">Rotate -1</button>
+            </div>
+        </div>
+
+        <!-- JS for circle tool -->
+        <script defer src="../../assets/js/timeline-visualizer.js"></script>
+
+    </section>
+
+    <!-- SECTION 3: Operations -->
+    <section id="operations">
+        <h2>Operations on Timelines</h2>
+
+        <p>Because a timeline is a pattern on a cycle, we can transform it in simple and musically meaningful ways:</p>
+
+        <h3>Rotation</h3>
+        <p>Shift every onset forward by the same number of pulses.  
+           This creates a new pattern with the same spacing.</p>
+
+        <h3>Complement</h3>
+        <p>The complement fills in every rest where there was no attack.  
+           If the original timeline has 5 attacks in 16 pulses, the complement has 11.</p>
+
+
+           
+        <div class="example-box">
+            <h4>Try It With the Pulse Lab</h4>
+            <p>The sequencer below lets you hear these operations.  
+               Load a timeline, rotate it, flip it, or invert X ↦ . and . ↦ X.</p>
+        </div>
+    </section>
+
+    <!-- COLLAPSIBLE PULSE LAB -->
+    <section id="pulse-lab">
+        <h2>Interactive Timeline Sequencer</h2>
+
+        <details>
+            <summary>Open the Pulse Lab Sequencer</summary>
+
+            <p style="margin-top: 15px;">
+                This tool lets you:
+                <ul>
+                    <li>Hear timelines as drum patterns</li>
+                    <li>Enter binary patterns or onset lists</li>
+                    <li>Export patterns (X . X . . X …)</li>
+                    <li>Experiment with operations in real time</li>
+                </ul>
+            </p>
+
+            <iframe 
+                src="https://avnerdorman.github.io/pulse-lab/"
+                style="width:100%; height:900px; border:1px solid #ccc;">
+            </iframe>
+        </details>
+    </section>
+
+</div>
+</body>
+</html>

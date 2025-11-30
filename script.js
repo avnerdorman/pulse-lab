@@ -26,6 +26,61 @@
     const LOADED_BPM_MIN = 20;
     const LOADED_BPM_MAX = 240;
 
+    // Bjorklund algorithm for Euclidean rhythms
+    function bjorklund(steps, pulses) {
+        steps = Math.round(steps);
+        pulses = Math.round(pulses);
+
+        if (pulses > steps || pulses == 0 || steps == 0) {
+            return [];
+        }
+
+        let pattern = [];
+        let counts = [];
+        let remainders = [];
+        let divisor = steps - pulses;
+        remainders.push(pulses);
+        let level = 0;
+
+        while (true) {
+            counts.push(Math.floor(divisor / remainders[level]));
+            remainders.push(divisor % remainders[level]);
+            divisor = remainders[level];
+            level += 1;
+            if (remainders[level] <= 1) {
+                break;
+            }
+        }
+
+        counts.push(divisor);
+
+        let r = 0;
+        let build = function(level) {
+            r++;
+            if (level > -1) {
+                for (let i = 0; i < counts[level]; i++) {
+                    build(level - 1);
+                }
+                if (remainders[level] != 0) {
+                    build(level - 2);
+                }
+            } else if (level == -1) {
+                pattern.push(0);
+            } else if (level == -2) {
+                pattern.push(1);
+            }
+        };
+
+        build(level);
+        return pattern.reverse();
+    }
+
+    // Convert binary array to X/. pattern string
+    function bjorklundToPattern(steps, pulses) {
+        const binary = bjorklund(steps, pulses);
+        return binary.map(b => b === 1 ? 'X' : '.').join('');
+    }
+
     initialize();
 
     function initialize() {
@@ -35,6 +90,7 @@
         setupImportControls();
         setupResetControl();
         setupClearControl();
+        setupEuclideanModal();
         applyInitialParams();
         ensureDefaultHatPattern();
         refreshExportText();
@@ -913,5 +969,141 @@
         if (!applied) {
             queuePatternSet(patternSet);
         }
+    }
+
+    function setupEuclideanModal() {
+        const modal = document.getElementById('euclidean-modal');
+        const pulsesInput = document.getElementById('euclidean-pulses');
+        const stepsInput = document.getElementById('euclidean-steps');
+        const applyBtn = document.getElementById('euclidean-apply');
+        const cancelBtn = document.getElementById('euclidean-cancel');
+
+        if (!modal || !pulsesInput || !stepsInput || !applyBtn || !cancelBtn) {
+            return;
+        }
+
+        let currentRowId = null;
+
+        // Open modal when "Euclidean..." clicked
+        trackerParent.addEventListener('click', event => {
+            const trigger = event.target && event.target.closest('.euclidean-trigger');
+            if (trigger) {
+                currentRowId = trigger.dataset.rowId;
+                const length = getPatternLength() || 16;
+                stepsInput.value = length;
+                stepsInput.disabled = true; // Lock to current measure length
+                pulsesInput.max = length;
+                pulsesInput.value = Math.min(5, length); // Default to 5 or length if smaller
+
+                // Update preset buttons for current measure length
+                updateEuclideanPresets(length);
+
+                modal.style.display = 'flex';
+                event.stopPropagation();
+
+                // Close the options menu
+                const actionCell = trigger.closest('.tracker-action-cell');
+                if (actionCell) actionCell.classList.remove('show-options');
+            }
+        });
+
+        // Preset buttons - only set k value (n is locked to measure length)
+        modal.addEventListener('click', event => {
+            const preset = event.target && event.target.closest('.preset-btn');
+            if (preset) {
+                pulsesInput.value = preset.dataset.k;
+                // Note: preset.dataset.n is ignored since n is locked to current measure length
+            }
+        });
+
+        // Apply
+        applyBtn.addEventListener('click', () => {
+            const k = parseInt(pulsesInput.value, 10);
+            const n = parseInt(stepsInput.value, 10);
+            if (currentRowId !== null && k && n) {
+                applyEuclideanPattern(currentRowId, k, n);
+            }
+            modal.style.display = 'none';
+        });
+
+        // Cancel
+        cancelBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        // Close on outside click
+        modal.addEventListener('click', event => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && modal.style.display !== 'none') {
+                modal.style.display = 'none';
+            }
+        });
+    }
+
+    function updateEuclideanPresets(n) {
+        const presetsContainer = document.querySelector('.euclidean-presets');
+        if (!presetsContainer) return;
+
+        // Common k values that work well for various lengths
+        const commonPatterns = [
+            { k: 3, label: 'Tresillo' },
+            { k: 5, label: 'Cinquillo' },
+            { k: 7, label: 'Seven' },
+            { k: Math.floor(n / 4), label: 'Quarter' },
+            { k: Math.floor(n / 3), label: 'Third' },
+            { k: Math.floor(n / 2), label: 'Half' }
+        ].filter(p => p.k > 0 && p.k < n); // Only show valid patterns
+
+        // Remove duplicates by k value
+        const unique = [];
+        const seen = new Set();
+        for (const p of commonPatterns) {
+            if (!seen.has(p.k)) {
+                seen.add(p.k);
+                unique.push(p);
+            }
+        }
+
+        // Sort by k value and limit to 6 presets
+        const presets = unique.sort((a, b) => a.k - b.k).slice(0, 6);
+
+        // Update the preset buttons
+        const buttonsHTML = presets.map(p =>
+            `<button type="button" class="preset-btn" data-k="${p.k}">E(${p.k},${n})</button>`
+        ).join('');
+
+        const buttons = presetsContainer.querySelector('p');
+        if (buttons && buttons.nextSibling) {
+            // Remove old buttons
+            while (buttons.nextSibling) {
+                buttons.nextSibling.remove();
+            }
+        }
+
+        // Add new buttons
+        buttons.insertAdjacentHTML('afterend', buttonsHTML);
+    }
+
+    function applyEuclideanPattern(rowId, pulses, steps) {
+        const pattern = bjorklundToPattern(steps, pulses);
+        const patternSet = {
+            length: steps,
+            clearAll: false,
+            patterns: [{
+                rowId: String(rowId),
+                pattern: pattern
+            }]
+        };
+        const applied = applyPatternSetNow(patternSet);
+        if (!applied) {
+            queuePatternSet(patternSet);
+        }
+        showMessage(`Applied E(${pulses},${steps}) pattern`);
     }
 })();

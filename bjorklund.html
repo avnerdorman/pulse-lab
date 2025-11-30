@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Bjorklund Algorithm (Euclidean Rhythm)</title>
+</head>
+<body>
+  <h3>Bjorklund Algorithm - Euclidean Rhythm</h3>
+  <p>Enter the number of Pulses in the timeline and number of onsets in the Euclidean Rhythm:</p>
+  <input type="text" id="steps" placeholder="Pulses">
+  <input type="text" id="pulses" placeholder="Number of Onsets">
+  <button onclick="calculateBjorklund()">Calculate</button>
+  <div id="result"></div>
+
+  <script>
+    function bjorklund(steps, pulses) {
+      steps = Math.round(steps);
+      pulses = Math.round(pulses);  
+
+      if(pulses > steps || pulses == 0 || steps == 0) {
+        return [];
+      }
+
+      let pattern = [];
+      let counts = [];
+      let remainders = [];
+      let divisor = steps - pulses;
+      remainders.push(pulses);
+      let level = 0;
+
+      while(true) {
+        counts.push(Math.floor(divisor / remainders[level]));
+        remainders.push(divisor % remainders[level]);
+        divisor = remainders[level]; 
+        level += 1;
+        if (remainders[level] <= 1) {
+          break;
+        }
+      }
+      
+      counts.push(divisor);
+
+      let r = 0;
+      let build = function(level) {
+        r++;
+        if (level > -1) {
+          for (let i=0; i < counts[level]; i++) {
+            build(level-1); 
+          }  
+          if (remainders[level] != 0) {
+            build(level-2);
+          }
+        } else if (level == -1) {
+            pattern.push(0);  
+        } else if (level == -2) {
+            pattern.push(1);        
+        } 
+      };
+
+      build(level);
+      return pattern.reverse();
+    }
+
+    function rotateArray(array, times) {
+      while (times--) {
+        let temp = array.shift();
+        array.push(temp);
+      }
+      return array;
+    }
+
+    function displayRotations(pattern) {
+      let rotations = '';
+      for (let i = 0; i < pattern.length; i++) {
+        // Join the pattern with a space for readability
+        rotations += pattern.join(' ') + '<br/>';
+        pattern = rotateArray(pattern.slice(), 1);
+      }
+      document.getElementById("result").innerHTML = "Rotations:<br/>" + rotations;
+    }
+
+    function calculateBjorklund() {
+      const steps = parseInt(document.getElementById("steps").value, 10);
+      const pulses = parseInt(document.getElementById("pulses").value, 10);
+      const result = bjorklund(steps, pulses);
+      displayRotations(result);
+    }
+  </script>
+</body>
+</html>

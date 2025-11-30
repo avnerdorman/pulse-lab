@@ -201,6 +201,38 @@
         </div>
     </form>
     </div>
+
+    <!-- Euclidean Rhythm Modal -->
+    <div id="euclidean-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h3>Generate Euclidean Rhythm</h3>
+            <p>Create a maximally even distribution E(k,n) over the current measure length</p>
+            <div class="euclidean-inputs">
+                <label>
+                    Onsets (k):
+                    <input type="number" id="euclidean-pulses" min="1" max="32" value="5">
+                </label>
+                <label>
+                    Steps (n) - current measure:
+                    <input type="number" id="euclidean-steps" min="1" max="32" value="16" disabled>
+                </label>
+            </div>
+            <div class="euclidean-presets">
+                <p>Common patterns:</p>
+                <button type="button" class="preset-btn" data-k="3" data-n="8">E(3,8)</button>
+                <button type="button" class="preset-btn" data-k="5" data-n="8">E(5,8)</button>
+                <button type="button" class="preset-btn" data-k="5" data-n="12">E(5,12)</button>
+                <button type="button" class="preset-btn" data-k="7" data-n="12">E(7,12)</button>
+                <button type="button" class="preset-btn" data-k="5" data-n="16">E(5,16)</button>
+                <button type="button" class="preset-btn" data-k="7" data-n="16">E(7,16)</button>
+            </div>
+            <div class="modal-actions">
+                <button type="button" id="euclidean-apply">Apply</button>
+                <button type="button" id="euclidean-cancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+
     <script src="bundle.js"></script>
     <script src="script.js"></script>
 
