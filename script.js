@@ -1120,6 +1120,42 @@
             return;
         }
 
+        // Handle rotation from canvas arrow clicks
+        function rotateTrack(rowId, direction) {
+            const row = document.querySelector(`.tracker-row[data-id="${rowId}"]`);
+            if (!row) return;
+
+            const cells = Array.from(row.querySelectorAll('.tracker-cell'));
+            const length = getPatternLength() || 16;
+            const pattern = cells.slice(0, length).map(cell =>
+                cell.classList.contains('tracker-enabled') ? 'X' : '.'
+            );
+
+            // Rotate the pattern
+            let rotated;
+            if (direction === 'left') {
+                rotated = pattern.slice(1).concat(pattern[0]);
+            } else {
+                rotated = [pattern[pattern.length - 1]].concat(pattern.slice(0, -1));
+            }
+
+            // Apply rotated pattern
+            cells.forEach((cell, i) => {
+                if (i < length) {
+                    if (rotated[i] === 'X') {
+                        cell.classList.add('tracker-enabled');
+                    } else {
+                        cell.classList.remove('tracker-enabled');
+                    }
+                }
+            });
+
+            // Refresh circle view
+            if (necklaceViewInitialized) {
+                necklaceView.refresh(getPatternLength);
+            }
+        }
+
         // Open necklace view
         necklaceViewBtn.addEventListener('click', () => {
             if (!necklaceViewInitialized) {
@@ -1134,12 +1170,21 @@
                     console.error('Failed to initialize necklace view');
                     return;
                 }
+
+                // Set up rotation callback
+                necklaceView.setRotateCallback(rotateTrack);
+
                 necklaceViewInitialized = true;
             }
 
+            // Show modal first so canvas can be sized properly
+            necklaceModal.style.display = 'flex';
+
+            // Resize canvas now that modal is visible
+            necklaceView.resizeCanvas();
+
             // Load current patterns from tracker
             necklaceView.loadFromTracker(getPatternLength);
-            necklaceModal.style.display = 'flex';
 
             // Sync with current playback state
             const app = window.simpleTrackerApp;

@@ -4,6 +4,7 @@ function NecklaceView() {
     this.circles = [];
     this.currentPulse = 0;
     this.isPlaying = false;
+    this.rotateCallback = null;
 
     // Visual constants
     this.CIRCLE_RADIUS = 80;
@@ -12,13 +13,44 @@ function NecklaceView() {
     this.CURRENT_PULSE_RADIUS = 12;
     this.GRID_COLS = 3;
     this.PADDING = 120;
+    this.ARROW_SIZE = 20;
+    this.ARROW_SPACING = 60;
 
     this.init = function(canvasId) {
         this.canvas = document.getElementById(canvasId);
         if (!this.canvas) return false;
         this.ctx = this.canvas.getContext('2d');
         this.resizeCanvas();
+        this.setupClickHandler();
         return true;
+    };
+
+    this.setupClickHandler = function() {
+        this.canvas.addEventListener('click', (e) => {
+            const rect = this.canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            // Check if click is on any rotation arrow
+            const clicked = this.getClickedArrow(x, y);
+            if (clicked && this.rotateCallback) {
+                this.rotateCallback(clicked.rowId, clicked.direction);
+            }
+        });
+
+        // Change cursor on hover
+        this.canvas.addEventListener('mousemove', (e) => {
+            const rect = this.canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const arrow = this.getClickedArrow(x, y);
+            this.canvas.style.cursor = arrow ? 'pointer' : 'default';
+        });
+    };
+
+    this.setRotateCallback = function(callback) {
+        this.rotateCallback = callback;
     };
 
     this.resizeCanvas = function() {
@@ -59,11 +91,16 @@ function NecklaceView() {
     };
 
     this.draw = function() {
-        if (!this.ctx) return;
+        if (!this.ctx) {
+            console.error('No canvas context available');
+            return;
+        }
 
         const ctx = this.ctx;
         const width = this.canvas.width;
         const height = this.canvas.height;
+
+        console.log('Drawing circles:', this.circles.length, 'Canvas size:', width, 'x', height);
 
         // Clear canvas
         ctx.fillStyle = 'rgba(3, 7, 17, 0.95)';
@@ -82,6 +119,7 @@ function NecklaceView() {
             const centerY = this.PADDING + row * cellHeight + cellHeight / 2;
 
             this.drawCircle(ctx, circle, centerX, centerY);
+            this.drawRotationArrows(ctx, circle, centerX, centerY);
         });
     };
 
@@ -147,6 +185,85 @@ function NecklaceView() {
 
         // Reset text baseline
         ctx.textBaseline = 'alphabetic';
+    };
+
+    this.drawRotationArrows = function(ctx, circle, centerX, centerY) {
+        const radius = this.CIRCLE_RADIUS;
+        const arrowY = centerY + radius + 50;
+        const leftArrowX = centerX - this.ARROW_SPACING / 2;
+        const rightArrowX = centerX + this.ARROW_SPACING / 2;
+
+        // Draw left arrow (shift left / counter-clockwise)
+        this.drawArrow(ctx, leftArrowX, arrowY, 'left');
+
+        // Draw right arrow (shift right / clockwise)
+        this.drawArrow(ctx, rightArrowX, arrowY, 'right');
+    };
+
+    this.drawArrow = function(ctx, x, y, direction) {
+        const size = this.ARROW_SIZE;
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.6)';
+        ctx.beginPath();
+
+        if (direction === 'left') {
+            // Left-pointing triangle
+            ctx.moveTo(x - size / 2, y);
+            ctx.lineTo(x + size / 2, y - size / 2);
+            ctx.lineTo(x + size / 2, y + size / 2);
+        } else {
+            // Right-pointing triangle
+            ctx.moveTo(x + size / 2, y);
+            ctx.lineTo(x - size / 2, y - size / 2);
+            ctx.lineTo(x - size / 2, y + size / 2);
+        }
+
+        ctx.closePath();
+        ctx.fill();
+    };
+
+    this.getClickedArrow = function(clickX, clickY) {
+        const width = this.canvas.width;
+        const height = this.canvas.height;
+        const cols = this.GRID_COLS;
+        const rows = Math.ceil(this.circles.length / cols);
+        const cellWidth = (width - this.PADDING * 2) / cols;
+        const cellHeight = (height - this.PADDING * 2) / rows;
+
+        for (let index = 0; index < this.circles.length; index++) {
+            const circle = this.circles[index];
+            const col = index % cols;
+            const row = Math.floor(index / cols);
+            const centerX = this.PADDING + col * cellWidth + cellWidth / 2;
+            const centerY = this.PADDING + row * cellHeight + cellHeight / 2;
+
+            const radius = this.CIRCLE_RADIUS;
+            const arrowY = centerY + radius + 50;
+            const leftArrowX = centerX - this.ARROW_SPACING / 2;
+            const rightArrowX = centerX + this.ARROW_SPACING / 2;
+
+            // Check left arrow
+            if (this.isPointInArrow(clickX, clickY, leftArrowX, arrowY, 'left')) {
+                return { rowId: circle.rowId, direction: 'left' };
+            }
+
+            // Check right arrow
+            if (this.isPointInArrow(clickX, clickY, rightArrowX, arrowY, 'right')) {
+                return { rowId: circle.rowId, direction: 'right' };
+            }
+        }
+
+        return null;
+    };
+
+    this.isPointInArrow = function(px, py, arrowX, arrowY, direction) {
+        const size = this.ARROW_SIZE;
+        const padding = 5; // Extra clickable area
+
+        // Simple bounding box check
+        return px >= arrowX - size / 2 - padding &&
+               px <= arrowX + size / 2 + padding &&
+               py >= arrowY - size / 2 - padding &&
+               py <= arrowY + size / 2 + padding;
     };
 
     this.setCurrentPulse = function(pulseIndex) {

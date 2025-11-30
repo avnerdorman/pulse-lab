@@ -183,17 +183,26 @@ function setupBaseEvents() {
 
         schedule.measureLength = track.settings.measureLength;
         schedule.stop();
-        
+
             schedule.runSchedule(getSetAudioOptions.options.bpm * 4);
+
+        // Dispatch play event for circle view
+        document.dispatchEvent(new CustomEvent('tracker:play'));
     });
 
     document.getElementById('pause').addEventListener('click', function (e) {
         schedule.stop();
+
+        // Dispatch pause event for circle view
+        document.dispatchEvent(new CustomEvent('tracker:pause'));
     });
 
     document.getElementById('stop').addEventListener('click', function (e) {
         schedule.stop();
         schedule = new simpleTracker(ctx, scheduleAudioBeat);
+
+        // Dispatch stop event for circle view
+        document.dispatchEvent(new CustomEvent('tracker:stop'));
     });
 
     // Spacebar to toggle play/stop
@@ -208,6 +217,9 @@ function setupBaseEvents() {
             // Stop
             schedule.stop();
             schedule = new simpleTracker(ctx, scheduleAudioBeat);
+
+            // Dispatch stop event for circle view
+            document.dispatchEvent(new CustomEvent('tracker:stop'));
         } else {
             // Play
             ctx.resume && ctx.resume();
@@ -216,6 +228,9 @@ function setupBaseEvents() {
             schedule.measureLength = track.settings.measureLength;
             schedule.stop();
             schedule.runSchedule(getSetAudioOptions.options.bpm * 4);
+
+            // Dispatch play event for circle view
+            document.dispatchEvent(new CustomEvent('tracker:play'));
         }
     });
 

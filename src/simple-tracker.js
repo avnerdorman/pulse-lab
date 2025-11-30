@@ -91,6 +91,11 @@ function tracker(ctx, scheduleAudioBeat) {
             elems.forEach( (e) => {
                 e.classList.add('tracker-current')
             })
+
+            // Dispatch pulse event for circle view
+            document.dispatchEvent(new CustomEvent('tracker:pulse', {
+                detail: { pulseIndex: this.current }
+            }));
         }, now + this.scheduleForward);
 
         this.clock.callbackAtTime(() => {

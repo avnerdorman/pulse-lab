@@ -841,6 +841,74 @@ button.full-width {
     max-height: 100%;
 }
 
+.necklace-controls {
+    margin-top: 16px;
+    padding: 16px;
+    background-color: rgba(3, 7, 17, 0.3);
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.necklace-track-selector {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 200px;
+}
+
+.necklace-track-selector label {
+    color: #cbd5e1;
+    font-size: 0.95rem;
+    white-space: nowrap;
+}
+
+.necklace-track-selector select {
+    flex: 1;
+    padding: 8px 12px;
+    background-color: rgba(3, 7, 17, 0.8);
+    color: #f8fafc;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 4px;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.necklace-track-selector select:focus {
+    outline: none;
+    border-color: rgba(59, 130, 246, 0.5);
+}
+
+.necklace-rotation-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.rotation-btn {
+    padding: 8px 16px;
+    background-color: rgba(148, 163, 184, 0.1);
+    color: #cbd5e1;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.rotation-btn:hover:not(:disabled) {
+    background-color: rgba(148, 163, 184, 0.2);
+    border-color: rgba(148, 163, 184, 0.5);
+}
+
+.rotation-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 .necklace-footer {
     margin-top: 16px;
     padding-top: 16px;
