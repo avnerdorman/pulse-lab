@@ -989,6 +989,197 @@ The circle view creates a direct parallel between rhythm and pitch:
 *Rotation arrows tooltip (in circle view):*
 "Click arrows to rotate the pattern. Notice how the spacing stays the same but the 'feel' changes relative to pulse 1. [Learn more: Rotation as Transformation]"
 
+**MIDI & MusicXML Export:**
+
+The ability to export patterns to standard music notation and sequencing formats would significantly extend the pedagogical value and practical utility of the Pulse Lab.
+
+**Pedagogical Benefits:**
+1. **Bridge to other software**: Students can export their patterns to DAWs, notation software, or analysis tools
+2. **Composition workflow**: Patterns created here become building blocks for larger compositions
+3. **Transcription practice**: Export to notation for traditional score reading/analysis
+4. **Portfolio development**: Students document their rhythmic explorations in standard formats
+5. **Cross-domain learning**: Connect rhythm programming to traditional music notation
+6. **Professional skills**: Exposure to industry-standard formats (MIDI, MusicXML)
+
+**MIDI Export Use Cases:**
+- Import pattern into Ableton Live, Logic Pro, or other DAW for further development
+- Use as starting point for drum programming in production environment
+- Analyze timing and velocity in MIDI editor
+- Layer multiple exported patterns with different instruments
+- Convert to audio via external sample libraries or synthesizers
+- Send to hardware drum machines or samplers
+
+**MusicXML Export Use Cases:**
+- Import into MuseScore, Sibelius, Finale, or Dorico for notation
+- Create traditional percussion scores from patterns
+- Generate worksheet materials for students (printed scores)
+- Analyze patterns using music theory software
+- Publish patterns in academic papers or educational materials
+- Share with musicians who read traditional notation
+
+**Technical Considerations:**
+
+*MIDI Format:*
+- **Note mapping**: Map each tracker row to a specific MIDI note number
+  * Standard GM drum map: Kick=36, Snare=38, HiHat=42, etc.
+  * Allow custom mapping configuration
+  * Consider polyphonic vs. channel-per-instrument approaches
+- **Timing**: Convert measure length and BPM to MIDI ticks
+  * Support standard resolutions (96, 480, 960 PPQ)
+  * Handle variable measure lengths properly
+  * Preserve exact timing relationships
+- **Velocity**: Could allow per-note velocity editing in future
+  * Default to fixed velocity (e.g., 100) for simplicity
+  * Could add accent/ghost note features later
+- **Tempo/Time Signature**:
+  * Include BPM from current settings
+  * Default to 4/4 time signature
+  * Calculate appropriate time signature from measure length if desired
+- **Multi-track export**: Each tracker row → separate MIDI track or channel
+
+*MusicXML Format:*
+- **Percussion notation**: Use unpitched percussion staff
+- **Note heads**: Map instruments to standard drum notation symbols
+- **Rhythmic values**: Convert grid positions to note durations
+  * 16-step pattern = sixteenth notes in 4/4
+  * Handle other measure lengths appropriately
+- **Multi-staff**: Each instrument could be separate staff or combined drum set notation
+- **Metadata**: Include title, creator, timestamp
+
+**Implementation Approaches:**
+
+*JavaScript MIDI Libraries:*
+1. **midi-writer-js**: Simple, lightweight, well-documented
+   ```javascript
+   const MidiWriter = require('midi-writer-js');
+   const track = new MidiWriter.Track();
+   track.addEvent(new MidiWriter.NoteEvent({pitch: ['C4'], duration: '4'}));
+   ```
+2. **jsmidgen**: Another option, slightly different API
+3. **tone.js**: Already has MIDI export capabilities, could leverage existing audio code
+
+*MusicXML Generation:*
+1. **musicxml-interfaces** (TypeScript library): Type-safe MusicXML generation
+2. **opensheetmusicdisplay**: Can render MusicXML, might have export utilities
+3. **Custom XML generation**: MusicXML is structured XML, could build manually
+4. **Python backend option**: Use music21 library (if adding server component)
+
+**UI Integration:**
+
+*Export Button Placement:*
+- Add to existing export menu alongside "Export Pattern" and "Export URL"
+- Consider: "Export → MIDI File", "Export → MusicXML File"
+- Could be in main controls or modal dialog
+
+*Export Options Dialog:*
+```
+┌─────────────────────────────────────┐
+│ Export MIDI                          │
+├─────────────────────────────────────┤
+│ Format: ☐ MIDI (.mid)                │
+│         ☐ MusicXML (.musicxml)       │
+│                                      │
+│ MIDI Options:                        │
+│ • Note Mapping: [Standard GM ▼]     │
+│ • Resolution:   [480 PPQ     ▼]     │
+│ • Tempo:        [120 BPM] (current)  │
+│                                      │
+│ Include:                             │
+│ ☑ All tracks                         │
+│ ☐ Selected tracks only               │
+│ ☑ Include muted tracks               │
+│                                      │
+│        [Cancel]  [Export]            │
+└─────────────────────────────────────┘
+```
+
+*Download Handling:*
+- Generate file blob in browser
+- Trigger download with appropriate filename
+- Filename format: `pulse-lab-pattern-YYYYMMDD-HHMMSS.mid`
+- Or allow user to name the file
+
+**Integration with Existing Export:**
+
+Current export features:
+- Export Pattern → JSON format for reload
+- Export URL → Shareable link
+
+New exports should complement these:
+- **JSON**: Complete state preservation (browser-specific)
+- **URL**: Easy sharing, embedded state (limited by URL length)
+- **Text notation**: Human-readable, copy-paste friendly
+- **MIDI**: DAW/sequencer compatibility (new)
+- **MusicXML**: Notation software compatibility (new)
+
+**Example Implementation Workflow:**
+
+```javascript
+function exportToMIDI() {
+    const MidiWriter = require('midi-writer-js');
+
+    // Get current pattern state
+    const patterns = getAllTrackerPatterns();
+    const bpm = getCurrentBPM();
+    const length = getPatternLength();
+
+    // Create MIDI file
+    const tracks = patterns.map((pattern, idx) => {
+        const track = new MidiWriter.Track();
+        track.setTempo(bpm);
+
+        // Map instrument to MIDI note
+        const midiNote = GM_DRUM_MAP[pattern.instrument] || (36 + idx);
+
+        // Convert pattern to MIDI events
+        pattern.steps.forEach((enabled, step) => {
+            if (enabled) {
+                const startTime = step * (60 / bpm) / (length / 4); // Calculate timing
+                track.addEvent(new MidiWriter.NoteEvent({
+                    pitch: [midiNote],
+                    duration: '16', // Sixteenth note
+                    startTick: step * (960 / length) // Assuming 960 PPQ
+                }));
+            }
+        });
+
+        return track;
+    });
+
+    // Generate and download
+    const write = new MidiWriter.Writer(tracks);
+    const blob = new Blob([write.buildFile()], { type: 'audio/midi' });
+    downloadBlob(blob, `pulse-lab-${Date.now()}.mid`);
+}
+```
+
+**Pedagogical Integration:**
+
+*Assignment Ideas:*
+1. "Create a timeline pattern and export to MIDI. Import into a DAW and create a 30-second composition."
+2. "Export your E(5,16) pattern to MusicXML. Print the score and write the inter-onset intervals below each note."
+3. "Create three related patterns using rotation. Export all to MIDI and layer in a DAW."
+
+*Course Integration:*
+- Week 4 assignment: Export patterns and analyze in notation software
+- Final project: Create pattern library and export all to MIDI for DAW session
+- Group work: Each student exports one layer, combine in shared DAW project
+
+**Testing Considerations:**
+- Test MIDI import in major DAWs (Ableton, Logic, FL Studio, Reaper)
+- Test MusicXML import in notation software (MuseScore, Sibelius, Finale)
+- Verify timing accuracy at different BPMs
+- Check multi-track/multi-channel handling
+- Test edge cases (empty patterns, very long patterns, muted tracks)
+
+**Future Enhancements to Export:**
+- Velocity editing per note
+- Swing/humanization parameters
+- Multiple bars/repetitions
+- Pattern variations in sequence
+- Direct upload to cloud services
+- Integration with notation rendering (preview before export)
+
 **Interactive Circle View (Other Features):**
 1. **Click to edit**: Click dots to toggle onsets in circle view
 2. **Rotation slider**: Continuous rotation control
