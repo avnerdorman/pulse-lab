@@ -530,23 +530,29 @@
         const midiNote = getMIDINoteForTrack(trackIndex);
 
         // Convert pattern to MIDI events
+        // Only add events for actual note onsets, use 'wait' for rests
+        let restCount = 0;
         track.pattern.forEach((pulse) => {
             if (pulse === 'X') {
                 // Note onset
-                midiTrack.addEvent(new MidiWriter.NoteEvent({
+                const noteEvent = {
                     pitch: midiNote,
                     duration: '16',
                     velocity: 100,
                     channel: 10
-                }));
+                };
+
+                // If there were rests before this note, add wait parameter
+                // midi-writer-js uses PPQ=128, so each 16th = 32 ticks
+                if (restCount > 0) {
+                    noteEvent.wait = 'T' + (restCount * 32);
+                    restCount = 0;
+                }
+
+                midiTrack.addEvent(new MidiWriter.NoteEvent(noteEvent));
             } else {
-                // Rest (use zero velocity)
-                midiTrack.addEvent(new MidiWriter.NoteEvent({
-                    pitch: midiNote,
-                    duration: '16',
-                    velocity: 0,
-                    channel: 10
-                }));
+                // Rest - increment counter
+                restCount++;
             }
         });
 
