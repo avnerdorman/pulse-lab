@@ -202,7 +202,13 @@
             tracks: tracks
         };
 
-        console.log('Sending payload:', JSON.stringify(payload, null, 2));
+        console.log('Sending payload:', payload);
+        console.log('Payload JSON:', JSON.stringify(payload, null, 2));
+        if (payload.tracks && payload.tracks[0]) {
+            console.log('First track:', payload.tracks[0]);
+            console.log('First track pattern type:', typeof payload.tracks[0].pattern);
+            console.log('First track pattern:', payload.tracks[0].pattern);
+        }
 
         const midiBtn = document.getElementById('export-midi-btn');
         const musicxmlBtn = document.getElementById('export-musicxml-btn');
