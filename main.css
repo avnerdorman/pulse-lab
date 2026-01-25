@@ -606,33 +606,11 @@ button.full-width {
     align-items: center;
 }
 
-.export-format-select {
-    background-color: rgba(2, 6, 23, 0.9);
-    border: 1px solid rgba(56, 189, 248, 0.3);
-    color: #f8fafc;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: border-color 0.2s ease;
-}
-
-.export-format-select:hover,
-.export-format-select:focus {
-    border-color: rgba(56, 189, 248, 0.6);
-    outline: none;
-}
-
-.export-format-select option {
-    background-color: rgba(15, 23, 42, 0.95);
-    color: #f8fafc;
-}
-
-.export-action-btn {
+.export-btn {
     flex-shrink: 0;
 }
 
-.export-action-btn.loading {
+.export-btn.loading {
     opacity: 0.6;
     pointer-events: none;
 }
