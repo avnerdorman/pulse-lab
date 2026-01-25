@@ -185,6 +185,14 @@
         const patternLength = getPatternLength();
         const tracks = extractTrackData();
 
+        // DEBUG: Log track data immediately after extraction
+        if (tracks.length > 0) {
+            console.log('DEBUG extractTrackData result:', tracks);
+            console.log('DEBUG first track pattern:', tracks[0].pattern);
+            console.log('DEBUG first track pattern type:', typeof tracks[0].pattern);
+            console.log('DEBUG first track pattern is array?:', Array.isArray(tracks[0].pattern));
+        }
+
         if (!tracks.length) {
             showMessage('Add at least one drum pattern before exporting.');
             return;
