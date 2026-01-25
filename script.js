@@ -3,7 +3,6 @@
     const output = document.getElementById('export-pattern-output');
     const copyBtn = document.getElementById('export-copy-btn');
     const downloadBtn = document.getElementById('export-download-btn');
-    const midiBtn = document.getElementById('export-midi-btn');
     const trackerParent = document.getElementById('tracker-parent');
     const bpmInput = document.getElementById('bpm');
     const bpmValue = document.getElementById('bpmValue');
@@ -153,6 +152,124 @@
         });
     }
 
+    // Extract track data for backend API
+    function extractTrackData() {
+        const tracks = [];
+        const rows = getTrackRows();
+        const length = getPatternLength();
+
+        rows.forEach(row => {
+            if (!rowHasActivity(row, length)) {
+                return;
+            }
+            const labelCell = row.querySelector('.tracker-first-cell');
+            const name = labelCell ? labelCell.textContent.trim() : `Track ${row.dataset.id || ''}`;
+            const cells = Array.from(row.querySelectorAll('.tracker-cell'));
+            const pattern = [];
+            for (let i = 0; i < length; i++) {
+                const cell = cells[i];
+                pattern.push(cell && cell.classList.contains('tracker-enabled') ? 'X' : '.');
+            }
+            tracks.push({
+                name: name || 'Track',
+                pattern: pattern.join('')
+            });
+        });
+
+        return tracks;
+    }
+
+    // Call backend export API
+    async function callExportAPI(format) {
+        const tempo = getTempo();
+        const patternLength = getPatternLength();
+        const tracks = extractTrackData();
+
+        if (!tracks.length) {
+            showMessage('Add at least one drum pattern before exporting.');
+            return;
+        }
+
+        if (!tempo || !patternLength) {
+            showMessage('Set tempo and pattern length before exporting.');
+            return;
+        }
+
+        const payload = {
+            format: format.toLowerCase(),
+            tempo: tempo,
+            pattern_length: patternLength,
+            tracks: tracks
+        };
+
+        const exportBtn = document.getElementById('export-action-btn');
+        const statusEl = document.getElementById('export-status');
+
+        if (exportBtn) {
+            exportBtn.disabled = true;
+            exportBtn.classList.add('loading');
+        }
+        if (statusEl) {
+            statusEl.textContent = 'Exporting...';
+            statusEl.className = 'export-status';
+        }
+
+        try {
+            const response = await fetch('https://pulse-lab-api.vercel.app/api/export', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.detail || `API error: ${response.status}`);
+            }
+
+            const blob = await response.blob();
+            const filename = format.toLowerCase() === 'midi'
+                ? 'pattern.mid'
+                : 'pattern.musicxml';
+            downloadFileFromBlob(blob, filename);
+
+            if (statusEl) {
+                statusEl.textContent = `Exported ${format.toUpperCase()} successfully.`;
+                statusEl.className = 'export-status success';
+                setTimeout(() => {
+                    statusEl.textContent = '';
+                }, 2000);
+            }
+        } catch (err) {
+            console.error('Export error:', err);
+            const message = `Export failed: ${err.message}`;
+            if (statusEl) {
+                statusEl.textContent = message;
+                statusEl.className = 'export-status error';
+            } else {
+                showMessage(message);
+            }
+        } finally {
+            if (exportBtn) {
+                exportBtn.disabled = false;
+                exportBtn.classList.remove('loading');
+            }
+        }
+    }
+
+    // Download blob as file
+    function downloadFileFromBlob(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
     function setupExportPanel() {
         if (!output) {
             return;
@@ -194,9 +311,47 @@
             });
         }
 
-        if (midiBtn) {
-            midiBtn.addEventListener('click', () => {
-                exportMIDI();
+        // Setup export format dropdown and action button
+        const formatSelect = document.getElementById('export-format-select');
+        const actionBtn = document.getElementById('export-action-btn');
+
+        if (formatSelect) {
+            formatSelect.addEventListener('change', (e) => {
+                const format = e.target.value;
+                if (actionBtn) {
+                    if (format === 'txt') {
+                        actionBtn.textContent = 'Download .txt';
+                    } else if (format === 'midi') {
+                        actionBtn.textContent = 'Export MIDI';
+                    } else if (format === 'musicxml') {
+                        actionBtn.textContent = 'Export MusicXML';
+                    }
+                }
+            });
+        }
+
+        if (actionBtn) {
+            actionBtn.addEventListener('click', () => {
+                const format = formatSelect ? formatSelect.value : 'txt';
+                if (format === 'txt') {
+                    // Existing txt download logic
+                    refreshExportText();
+                    const text = output.value;
+                    if (!text) {
+                        return;
+                    }
+                    const blob = new Blob([text + '\n'], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'pattern.txt';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                } else {
+                    callExportAPI(format);
+                }
             });
         }
     }
@@ -447,171 +602,6 @@
 
     function padLabel(label) {
         return label.padEnd(LABEL_WIDTH, ' ');
-    }
-
-    // MIDI Export Functionality
-    function exportMIDI() {
-        if (!window.MidiWriter) {
-            console.error('MidiWriter not available');
-            showMessage('MIDI export is not available');
-            return;
-        }
-
-        const tracks = extractTracksForMIDI();
-        if (tracks.length === 0) {
-            showMessage('No tracks to export');
-            return;
-        }
-
-        const tempo = getTempo() || 120;
-        const patternLength = getPatternLength();
-
-        try {
-            const midiTracks = tracks.map((track, index) =>
-                buildMIDITrack(track, index, tempo, patternLength)
-            );
-
-            const writer = new window.MidiWriter.Writer(midiTracks);
-            const bytes = writer.buildFile();
-            downloadMIDIFile(bytes);
-            showMessage('MIDI file exported successfully');
-        } catch (error) {
-            console.error('MIDI export error:', error);
-            showMessage('Error exporting MIDI file');
-        }
-    }
-
-    function extractTracksForMIDI() {
-        const length = getPatternLength();
-        const rows = getTrackRows();
-        const activeRows = rows.filter(row => rowHasActivity(row, length));
-
-        return activeRows.map(row => {
-            const labelCell = row.querySelector('.tracker-first-cell');
-            const name = labelCell ? labelCell.textContent.trim() : `Track ${row.dataset.id || ''}`.trim();
-            const cells = Array.from(row.querySelectorAll('.tracker-cell'));
-
-            // Convert cells to pattern array ['X', '.', 'X', ...]
-            const pattern = [];
-            for (let i = 0; i < length; i++) {
-                const cell = cells[i];
-                pattern.push(cell && cell.classList.contains('tracker-enabled') ? 'X' : '.');
-            }
-
-            return { name, pattern };
-        });
-    }
-
-    function buildMIDITrack(track, trackIndex, tempo, patternLength) {
-        const MidiWriter = window.MidiWriter;
-        const midiTrack = new MidiWriter.Track();
-
-        // Set tempo (only in first track)
-        if (trackIndex === 0) {
-            midiTrack.setTempo(tempo);
-        }
-
-        // Set time signature (only in first track)
-        if (trackIndex === 0) {
-            const timeSignature = calculateMIDITimeSignature(patternLength);
-            midiTrack.addEvent(new MidiWriter.TimeSignatureEvent({
-                numerator: timeSignature.numerator,
-                denominator: timeSignature.denominator,
-                thirtyseconds: 8
-            }));
-        }
-
-        // Add track name
-        midiTrack.addEvent(new MidiWriter.TrackNameEvent({
-            text: track.name || `Track ${trackIndex + 1}`
-        }));
-
-        // Get MIDI note for this percussion instrument
-        const midiNote = getMIDINoteForTrack(trackIndex);
-
-        // Convert pattern to MIDI events
-        // Only add events for actual note onsets, use 'wait' for rests
-        let restCount = 0;
-        track.pattern.forEach((pulse) => {
-            if (pulse === 'X') {
-                // Note onset
-                const noteEvent = {
-                    pitch: midiNote,
-                    duration: '16',
-                    velocity: 100,
-                    channel: 10
-                };
-
-                // If there were rests before this note, add wait parameter
-                // midi-writer-js uses PPQ=128, so each 16th = 32 ticks
-                if (restCount > 0) {
-                    noteEvent.wait = 'T' + (restCount * 32);
-                    restCount = 0;
-                }
-
-                midiTrack.addEvent(new MidiWriter.NoteEvent(noteEvent));
-            } else {
-                // Rest - increment counter
-                restCount++;
-            }
-        });
-
-        return midiTrack;
-    }
-
-    function calculateMIDITimeSignature(patternLength) {
-        const quarters = patternLength / 4; // 4 sixteenth notes = 1 quarter note
-
-        // Common time signatures
-        if (quarters === 4) return { numerator: 4, denominator: 4 };
-        if (quarters === 3) return { numerator: 3, denominator: 4 };
-        if (quarters === 2) return { numerator: 2, denominator: 4 };
-        if (quarters === 6) return { numerator: 6, denominator: 4 };
-        if (quarters === 5) return { numerator: 5, denominator: 4 };
-        if (quarters === 7) return { numerator: 7, denominator: 4 };
-
-        // Default: use calculated quarters
-        const roundedQuarters = Math.round(quarters);
-        return {
-            numerator: roundedQuarters > 0 ? roundedQuarters : 4,
-            denominator: 4
-        };
-    }
-
-    function getMIDINoteForTrack(trackIndex) {
-        // General MIDI Drum Map (Channel 10 Standard)
-        const drumMap = {
-            0: 36,  // Acoustic Bass Drum
-            1: 38,  // Acoustic Snare
-            2: 42,  // Closed Hi-Hat
-            3: 46,  // Open Hi-Hat
-            4: 49,  // Crash Cymbal 1
-            5: 51,  // Ride Cymbal 1
-            6: 50,  // High Tom
-            7: 47,  // Low-Mid Tom
-            8: 45,  // Low Tom
-            9: 41,  // Low Floor Tom
-            10: 43, // High Floor Tom
-            11: 48, // Hi-Mid Tom
-            12: 56, // Cowbell
-            13: 54, // Tambourine
-            14: 39, // Hand Clap
-            15: 37  // Side Stick
-        };
-
-        return drumMap[trackIndex] || 36; // Default to bass drum
-    }
-
-    function downloadMIDIFile(bytes) {
-        const blob = new Blob([bytes], { type: 'audio/midi' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `pulse-pattern-${Date.now()}.mid`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
     }
 
     function fallbackCopy(text) {

@@ -4,13 +4,9 @@ const getSetFormValues = require('get-set-form-values');
 const adsrGainNode = require('adsr-gain-node');
 const simpleTracker = require('./simple-tracker');
 const FileSaver = require('file-saver');
-const MidiWriter = require('midi-writer-js');
 
 const getSetControls = require('./get-set-controls');
 const getSetAudioOptions = new getSetControls();
-
-// Expose MidiWriter globally for use in script.js
-window.MidiWriter = MidiWriter;
 
 const ctx = new AudioContext();
 const defaultTrack = require('./default-track');
