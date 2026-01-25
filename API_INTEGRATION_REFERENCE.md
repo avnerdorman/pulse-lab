@@ -22,7 +22,7 @@ POST https://pulse-lab-api.vercel.app/api/export
   "tracks": [
     {
       "name": "Kick",
-      "pattern": "X . . . X . . . X . . . X . . ."
+      "pattern": ["X", ".", ".", ".", "X", ".", ".", ".", "X", ".", ".", ".", "X", ".", ".", "."]
     }
   ]
 }
@@ -37,7 +37,7 @@ POST https://pulse-lab-api.vercel.app/api/export
 | `pattern_length` | number | Yes | Number of pulses (8-32 typical) |
 | `tracks` | array | Yes | At least 1 track required |
 | `tracks[].name` | string | Yes | Drum instrument name |
-| `tracks[].pattern` | string | Yes | X/. characters, length must match `pattern_length` |
+| `tracks[].pattern` | array | Yes | Array of `'X'` or `'.'`, length must match `pattern_length` |
 
 ---
 
@@ -93,7 +93,7 @@ function extractTrackData() {
 
         tracks.push({
             name: name || 'Track',
-            pattern: pattern.join('')
+            pattern: pattern
         });
     });
 
@@ -194,21 +194,18 @@ function downloadFileFromBlob(blob, filename) {
 
 ## Pattern Format
 
-### Input Pattern String
+### Input Pattern Array
 
-Pattern string uses `X` for active and `.` (dot) for inactive:
+Each `pattern` value is an array of `'X'` (active) or `'.'` (rest) tokens. Length must equal `pattern_length`.
 
+```json
+{
+  "name": "Snare",
+  "pattern": [".", ".", "X", ".", ".", ".", "X", ".", ".", ".", "X", ".", ".", ".", "X", "."]
+}
 ```
-"X . . . X . . . X . . . X . . ."
-```
 
-**Length must match `pattern_length`**
-
-When joining array of characters:
-```javascript
-const pattern = ['X', '.', 'X', '.', 'X', '.', 'X', '.'].join('')
-// Result: "X.X.X.X."
-```
+You may still join the array for display purposes in the UI, but always send the array form to the API.
 
 ### Time Signature Calculation (Backend)
 
@@ -234,7 +231,7 @@ Custom time signatures are not currently supported.
 | "format must be 'midi' or 'musicxml'" | Invalid format string | Use exactly `"midi"` or `"musicxml"` |
 | "tracks must be a list" | Tracks not array | Always send tracks as array, even if one item |
 | "track must have 'name' and 'pattern'" | Missing track fields | Ensure each track has both properties |
-| "pattern length must equal pattern_length" | Pattern string length mismatch | Verify `len(pattern) == pattern_length` |
+| "pattern length must equal pattern_length" | Pattern array length mismatch | Ensure `pattern.length === pattern_length` |
 
 ### Processing Errors (500)
 
@@ -278,7 +275,7 @@ curl -X POST https://pulse-lab-api.vercel.app/api/export \
     "tracks": [
       {
         "name": "Kick",
-        "pattern": "X . . . X . . . X . . . X . . ."
+        "pattern": ["X", ".", ".", ".", "X", ".", ".", ".", "X", ".", ".", ".", "X", ".", ".", "."]
       }
     ]
   }' \
@@ -297,7 +294,7 @@ fetch('https://pulse-lab-api.vercel.app/api/export', {
     pattern_length: 16,
     tracks: [{
       name: 'Kick',
-      pattern: 'X . . . X . . . X . . . X . . .'
+      pattern: ['X', '.', '.', '.', 'X', '.', '.', '.', 'X', '.', '.', '.', 'X', '.', '.', '.']
     }]
   })
 })
@@ -330,7 +327,7 @@ fetch('https://pulse-lab-api.vercel.app/api/export', {
 
 ### Pattern Length Mismatch
 **Symptom:** "pattern length must equal pattern_length" error
-**Solution:** Verify pattern string character count matches `pattern_length` value.
+**Solution:** Ensure each `pattern` array has exactly `pattern_length` elements.
 
 ### Timeout
 **Symptom:** Export hangs for 30+ seconds then fails
