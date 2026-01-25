@@ -1,3 +1,4 @@
+// VERSION: 5 - PATTERN AS ARRAY (NOT JOINED STRING)
 (function () {
     const panel = document.getElementById('export-pattern-panel');
     const output = document.getElementById('export-pattern-output');
