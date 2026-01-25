@@ -233,6 +233,7 @@
 
             if (!response.ok) {
                 const error = await response.json().catch(() => ({}));
+                console.log('API error response:', error);
                 const errorMsg = error.detail || error.message || `API error: ${response.status}`;
                 throw new Error(errorMsg);
             }
