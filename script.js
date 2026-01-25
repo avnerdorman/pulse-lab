@@ -172,7 +172,7 @@
             }
             tracks.push({
                 name: name || 'Track',
-                pattern: pattern.join('')
+                pattern: pattern
             });
         });
 
