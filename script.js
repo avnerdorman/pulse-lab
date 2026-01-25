@@ -202,7 +202,7 @@
             tracks: tracks
         };
 
-        console.log('Sending payload:', payload);
+        console.log('Sending payload:', JSON.stringify(payload, null, 2));
 
         const midiBtn = document.getElementById('export-midi-btn');
         const musicxmlBtn = document.getElementById('export-musicxml-btn');
@@ -233,7 +233,7 @@
 
             if (!response.ok) {
                 const error = await response.json().catch(() => ({}));
-                console.log('API error response:', error);
+                console.log('API error response:', JSON.stringify(error, null, 2));
                 const errorMsg = error.detail || error.message || `API error: ${response.status}`;
                 throw new Error(errorMsg);
             }
