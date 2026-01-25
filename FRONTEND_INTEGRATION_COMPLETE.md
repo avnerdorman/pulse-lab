@@ -13,12 +13,12 @@ The pulse-lab frontend has been successfully integrated with the Python FastAPI 
 **New Functions:**
 
 #### `extractTrackData()` (Lines 155-178)
-Extracts all active drum tracks from the DOM and returns an array of track objects with name and pattern string.
+Extracts all active drum tracks from the DOM and returns an array of track objects with name and pattern array.
 
 ```javascript
 {
   "name": "Kick",
-  "pattern": "X . . . X . . . X . . . X . . ."
+  "pattern": ["X", ".", ".", ".", "X", ".", ".", ".", "X", ".", ".", ".", "X", ".", ".", "."]
 }
 ```
 
@@ -134,11 +134,11 @@ POST https://pulse-lab-api.vercel.app/api/export
   "tracks": [
     {
       "name": "Kick",
-      "pattern": "X . . . X . . . X . . . X . . ."
+      "pattern": ["X", ".", ".", ".", "X", ".", ".", ".", "X", ".", ".", ".", "X", ".", ".", "."]
     },
     {
       "name": "Snare",
-      "pattern": ". . . . X . . . . . . . X . . ."
+      "pattern": [".", ".", ".", ".", "X", ".", ".", ".", ".", ".", ".", ".", "X", ".", ".", "."]
     }
   ]
 }

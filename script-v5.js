@@ -26,9 +26,9 @@
     };
 
     const LABEL_WIDTH = 17;
-    const LOADED_BPM_DEFAULT = 80;
-    const LOADED_BPM_MIN = 20;
-    const LOADED_BPM_MAX = 240;
+    const LOADED_BPM_DEFAULT = 120;
+    const LOADED_BPM_MIN = 30;
+    const LOADED_BPM_MAX = 300;
 
     // Bjorklund algorithm for Euclidean rhythms
     function bjorklund(steps, pulses) {
@@ -164,7 +164,11 @@
                 return;
             }
             const labelCell = row.querySelector('.tracker-first-cell');
-            const name = labelCell ? labelCell.textContent.trim() : `Track ${row.dataset.id || ''}`;
+            let name = labelCell ? labelCell.textContent.trim() : `Track ${row.dataset.id || ''}`;
+
+            // Sanitize track name: max 50 chars, remove dangerous characters
+            name = name.substring(0, 50).replace(/[<>"'&]/g, '').trim() || 'Track';
+
             const cells = Array.from(row.querySelectorAll('.tracker-cell'));
             const pattern = [];
             for (let i = 0; i < length; i++) {
@@ -172,7 +176,7 @@
                 pattern.push(cell && cell.classList.contains('tracker-enabled') ? 'X' : '.');
             }
             tracks.push({
-                name: name || 'Track',
+                name: name,
                 pattern: pattern
             });
         });
@@ -182,18 +186,11 @@
 
     // Call backend export API
     async function callExportAPI(format) {
-        const tempo = getTempo();
-        const patternLength = getPatternLength();
+        const tempo = parseInt(getTempo(), 10);
+        const patternLength = parseInt(getPatternLength(), 10);
         const tracks = extractTrackData();
 
-        // DEBUG: Log track data immediately after extraction
-        if (tracks.length > 0) {
-            console.log('DEBUG extractTrackData result:', tracks);
-            console.log('DEBUG first track pattern:', tracks[0].pattern);
-            console.log('DEBUG first track pattern type:', typeof tracks[0].pattern);
-            console.log('DEBUG first track pattern is array?:', Array.isArray(tracks[0].pattern));
-        }
-
+        // Validate inputs according to backend specs
         if (!tracks.length) {
             showMessage('Add at least one drum pattern before exporting.');
             return;
@@ -204,20 +201,55 @@
             return;
         }
 
+        // Validate tempo (30-300 BPM)
+        if (tempo < 30 || tempo > 300) {
+            showMessage('Tempo must be between 30 and 300 BPM.');
+            return;
+        }
+
+        // Validate pattern length (1-1000)
+        if (patternLength < 1 || patternLength > 1000) {
+            showMessage('Pattern length must be between 1 and 1000 pulses.');
+            return;
+        }
+
+        // Validate number of tracks (max 100)
+        if (tracks.length > 100) {
+            showMessage('Maximum 100 tracks allowed.');
+            return;
+        }
+
+        // Validate each track
+        for (let i = 0; i < tracks.length; i++) {
+            const track = tracks[i];
+
+            // Validate track name length (max 50)
+            if (track.name.length > 50) {
+                showMessage(`Track ${i + 1} name exceeds 50 characters.`);
+                return;
+            }
+
+            // Validate pattern length matches
+            if (track.pattern.length !== patternLength) {
+                showMessage(`Track ${i + 1} pattern length doesn't match pattern_length.`);
+                return;
+            }
+
+            // Validate pattern content (only X and .)
+            for (let j = 0; j < track.pattern.length; j++) {
+                if (track.pattern[j] !== 'X' && track.pattern[j] !== '.') {
+                    showMessage(`Track ${i + 1} has invalid pattern character at position ${j + 1}.`);
+                    return;
+                }
+            }
+        }
+
         const payload = {
             format: format.toLowerCase(),
             tempo: tempo,
             pattern_length: patternLength,
             tracks: tracks
         };
-
-        console.log('Sending payload:', payload);
-        console.log('Payload JSON:', JSON.stringify(payload, null, 2));
-        if (payload.tracks && payload.tracks[0]) {
-            console.log('First track:', payload.tracks[0]);
-            console.log('First track pattern type:', typeof payload.tracks[0].pattern);
-            console.log('First track pattern:', payload.tracks[0].pattern);
-        }
 
         const midiBtn = document.getElementById('export-midi-btn');
         const musicxmlBtn = document.getElementById('export-musicxml-btn');
@@ -248,7 +280,6 @@
 
             if (!response.ok) {
                 const error = await response.json().catch(() => ({}));
-                console.log('API error response:', JSON.stringify(error, null, 2));
                 const errorMsg = error.detail || error.message || `API error: ${response.status}`;
                 throw new Error(errorMsg);
             }
@@ -344,7 +375,7 @@
         // Setup export buttons
         const txtBtn = document.getElementById('export-txt-btn');
         const midiBtn = document.getElementById('export-midi-btn');
-        const musicxmlBtn = document.getElementById('export-musicxml-btn');
+        // const musicxmlBtn = document.getElementById('export-musicxml-btn');
 
         // TXT download button
         if (txtBtn) {
@@ -374,11 +405,11 @@
         }
 
         // MusicXML export button
-        if (musicxmlBtn) {
-            musicxmlBtn.addEventListener('click', () => {
-                callExportAPI('musicxml');
-            });
-        }
+        // if (musicxmlBtn) {
+        //     musicxmlBtn.addEventListener('click', () => {
+        //         callExportAPI('musicxml');
+        //     });
+        // }
     }
 
     function setupTrackerListeners() {
