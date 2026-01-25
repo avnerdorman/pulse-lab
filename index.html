@@ -107,12 +107,9 @@
                     <div class="export-pattern-content">
                         <textarea id="export-pattern-output" class="export-pattern-output" readonly aria-label="Export pattern text"></textarea>
                         <div class="export-pattern-actions">
-                            <select id="export-format-select" class="export-format-select" aria-label="Export format">
-                                <option value="txt">TXT</option>
-                                <option value="midi">MIDI</option>
-                                <option value="musicxml">MusicXML</option>
-                            </select>
-                            <button type="button" id="export-action-btn" class="export-action-btn">Download .txt</button>
+                            <button type="button" id="export-txt-btn" class="export-btn">Download .txt</button>
+                            <button type="button" id="export-midi-btn" class="export-btn">Export MIDI</button>
+                            <button type="button" id="export-musicxml-btn" class="export-btn">Export MusicXML</button>
                             <button type="button" id="export-copy-btn">Copy to Clipboard</button>
                         </div>
                         <div id="export-status" class="export-status"></div>

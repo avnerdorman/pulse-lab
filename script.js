@@ -202,15 +202,23 @@
             tracks: tracks
         };
 
-        const exportBtn = document.getElementById('export-action-btn');
+        console.log('Sending payload:', payload);
+
+        const midiBtn = document.getElementById('export-midi-btn');
+        const musicxmlBtn = document.getElementById('export-musicxml-btn');
         const statusEl = document.getElementById('export-status');
 
-        if (exportBtn) {
-            exportBtn.disabled = true;
-            exportBtn.classList.add('loading');
+        // Disable both export buttons during request
+        if (midiBtn) {
+            midiBtn.disabled = true;
+            midiBtn.classList.add('loading');
+        }
+        if (musicxmlBtn) {
+            musicxmlBtn.disabled = true;
+            musicxmlBtn.classList.add('loading');
         }
         if (statusEl) {
-            statusEl.textContent = 'Exporting...';
+            statusEl.textContent = `Exporting ${format.toUpperCase()}...`;
             statusEl.className = 'export-status';
         }
 
@@ -225,7 +233,8 @@
 
             if (!response.ok) {
                 const error = await response.json().catch(() => ({}));
-                throw new Error(error.detail || `API error: ${response.status}`);
+                const errorMsg = error.detail || error.message || `API error: ${response.status}`;
+                throw new Error(errorMsg);
             }
 
             const blob = await response.blob();
@@ -235,11 +244,11 @@
             downloadFileFromBlob(blob, filename);
 
             if (statusEl) {
-                statusEl.textContent = `Exported ${format.toUpperCase()} successfully.`;
+                statusEl.textContent = `✓ Exported ${format.toUpperCase()} successfully!`;
                 statusEl.className = 'export-status success';
                 setTimeout(() => {
                     statusEl.textContent = '';
-                }, 2000);
+                }, 3000);
             }
         } catch (err) {
             console.error('Export error:', err);
@@ -251,9 +260,14 @@
                 showMessage(message);
             }
         } finally {
-            if (exportBtn) {
-                exportBtn.disabled = false;
-                exportBtn.classList.remove('loading');
+            // Re-enable export buttons
+            if (midiBtn) {
+                midiBtn.disabled = false;
+                midiBtn.classList.remove('loading');
+            }
+            if (musicxmlBtn) {
+                musicxmlBtn.disabled = false;
+                musicxmlBtn.classList.remove('loading');
             }
         }
     }
@@ -311,47 +325,42 @@
             });
         }
 
-        // Setup export format dropdown and action button
-        const formatSelect = document.getElementById('export-format-select');
-        const actionBtn = document.getElementById('export-action-btn');
+        // Setup export buttons
+        const txtBtn = document.getElementById('export-txt-btn');
+        const midiBtn = document.getElementById('export-midi-btn');
+        const musicxmlBtn = document.getElementById('export-musicxml-btn');
 
-        if (formatSelect) {
-            formatSelect.addEventListener('change', (e) => {
-                const format = e.target.value;
-                if (actionBtn) {
-                    if (format === 'txt') {
-                        actionBtn.textContent = 'Download .txt';
-                    } else if (format === 'midi') {
-                        actionBtn.textContent = 'Export MIDI';
-                    } else if (format === 'musicxml') {
-                        actionBtn.textContent = 'Export MusicXML';
-                    }
+        // TXT download button
+        if (txtBtn) {
+            txtBtn.addEventListener('click', () => {
+                refreshExportText();
+                const text = output.value;
+                if (!text) {
+                    return;
                 }
+                const blob = new Blob([text + '\n'], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'pattern.txt';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
             });
         }
 
-        if (actionBtn) {
-            actionBtn.addEventListener('click', () => {
-                const format = formatSelect ? formatSelect.value : 'txt';
-                if (format === 'txt') {
-                    // Existing txt download logic
-                    refreshExportText();
-                    const text = output.value;
-                    if (!text) {
-                        return;
-                    }
-                    const blob = new Blob([text + '\n'], { type: 'text/plain' });
-                    const url = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = url;
-                    link.download = 'pattern.txt';
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    URL.revokeObjectURL(url);
-                } else {
-                    callExportAPI(format);
-                }
+        // MIDI export button
+        if (midiBtn) {
+            midiBtn.addEventListener('click', () => {
+                callExportAPI('midi');
+            });
+        }
+
+        // MusicXML export button
+        if (musicxmlBtn) {
+            musicxmlBtn.addEventListener('click', () => {
+                callExportAPI('musicxml');
             });
         }
     }
