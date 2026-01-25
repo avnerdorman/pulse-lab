@@ -1,3 +1,4 @@
+// VERSION: 5 - PATTERN AS ARRAY (NOT JOINED STRING)
 (function () {
     const panel = document.getElementById('export-pattern-panel');
     const output = document.getElementById('export-pattern-output');
@@ -172,7 +173,7 @@
             }
             tracks.push({
                 name: name || 'Track',
-                pattern: pattern.join('')
+                pattern: pattern
             });
         });
 
@@ -184,6 +185,14 @@
         const tempo = getTempo();
         const patternLength = getPatternLength();
         const tracks = extractTrackData();
+
+        // DEBUG: Log track data immediately after extraction
+        if (tracks.length > 0) {
+            console.log('DEBUG extractTrackData result:', tracks);
+            console.log('DEBUG first track pattern:', tracks[0].pattern);
+            console.log('DEBUG first track pattern type:', typeof tracks[0].pattern);
+            console.log('DEBUG first track pattern is array?:', Array.isArray(tracks[0].pattern));
+        }
 
         if (!tracks.length) {
             showMessage('Add at least one drum pattern before exporting.');
@@ -203,6 +212,12 @@
         };
 
         console.log('Sending payload:', payload);
+        console.log('Payload JSON:', JSON.stringify(payload, null, 2));
+        if (payload.tracks && payload.tracks[0]) {
+            console.log('First track:', payload.tracks[0]);
+            console.log('First track pattern type:', typeof payload.tracks[0].pattern);
+            console.log('First track pattern:', payload.tracks[0].pattern);
+        }
 
         const midiBtn = document.getElementById('export-midi-btn');
         const musicxmlBtn = document.getElementById('export-musicxml-btn');
@@ -233,6 +248,7 @@
 
             if (!response.ok) {
                 const error = await response.json().catch(() => ({}));
+                console.log('API error response:', JSON.stringify(error, null, 2));
                 const errorMsg = error.detail || error.message || `API error: ${response.status}`;
                 throw new Error(errorMsg);
             }
