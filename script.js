@@ -152,6 +152,124 @@
         });
     }
 
+    // Extract track data for backend API
+    function extractTrackData() {
+        const tracks = [];
+        const rows = getTrackRows();
+        const length = getPatternLength();
+
+        rows.forEach(row => {
+            if (!rowHasActivity(row, length)) {
+                return;
+            }
+            const labelCell = row.querySelector('.tracker-first-cell');
+            const name = labelCell ? labelCell.textContent.trim() : `Track ${row.dataset.id || ''}`;
+            const cells = Array.from(row.querySelectorAll('.tracker-cell'));
+            const pattern = [];
+            for (let i = 0; i < length; i++) {
+                const cell = cells[i];
+                pattern.push(cell && cell.classList.contains('tracker-enabled') ? 'X' : '.');
+            }
+            tracks.push({
+                name: name || 'Track',
+                pattern: pattern.join('')
+            });
+        });
+
+        return tracks;
+    }
+
+    // Call backend export API
+    async function callExportAPI(format) {
+        const tempo = getTempo();
+        const patternLength = getPatternLength();
+        const tracks = extractTrackData();
+
+        if (!tracks.length) {
+            showMessage('Add at least one drum pattern before exporting.');
+            return;
+        }
+
+        if (!tempo || !patternLength) {
+            showMessage('Set tempo and pattern length before exporting.');
+            return;
+        }
+
+        const payload = {
+            format: format.toLowerCase(),
+            tempo: tempo,
+            pattern_length: patternLength,
+            tracks: tracks
+        };
+
+        const exportBtn = document.getElementById('export-action-btn');
+        const statusEl = document.getElementById('export-status');
+
+        if (exportBtn) {
+            exportBtn.disabled = true;
+            exportBtn.classList.add('loading');
+        }
+        if (statusEl) {
+            statusEl.textContent = 'Exporting...';
+            statusEl.className = 'export-status';
+        }
+
+        try {
+            const response = await fetch('https://pulse-lab-api.vercel.app/api/export', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.detail || `API error: ${response.status}`);
+            }
+
+            const blob = await response.blob();
+            const filename = format.toLowerCase() === 'midi'
+                ? 'pattern.mid'
+                : 'pattern.musicxml';
+            downloadFileFromBlob(blob, filename);
+
+            if (statusEl) {
+                statusEl.textContent = `Exported ${format.toUpperCase()} successfully.`;
+                statusEl.className = 'export-status success';
+                setTimeout(() => {
+                    statusEl.textContent = '';
+                }, 2000);
+            }
+        } catch (err) {
+            console.error('Export error:', err);
+            const message = `Export failed: ${err.message}`;
+            if (statusEl) {
+                statusEl.textContent = message;
+                statusEl.className = 'export-status error';
+            } else {
+                showMessage(message);
+            }
+        } finally {
+            if (exportBtn) {
+                exportBtn.disabled = false;
+                exportBtn.classList.remove('loading');
+            }
+        }
+    }
+
+    // Download blob as file
+    function downloadFileFromBlob(blob, filename) {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
     function setupExportPanel() {
         if (!output) {
             return;
@@ -190,6 +308,50 @@
                 link.click();
                 document.body.removeChild(link);
                 URL.revokeObjectURL(url);
+            });
+        }
+
+        // Setup export format dropdown and action button
+        const formatSelect = document.getElementById('export-format-select');
+        const actionBtn = document.getElementById('export-action-btn');
+
+        if (formatSelect) {
+            formatSelect.addEventListener('change', (e) => {
+                const format = e.target.value;
+                if (actionBtn) {
+                    if (format === 'txt') {
+                        actionBtn.textContent = 'Download .txt';
+                    } else if (format === 'midi') {
+                        actionBtn.textContent = 'Export MIDI';
+                    } else if (format === 'musicxml') {
+                        actionBtn.textContent = 'Export MusicXML';
+                    }
+                }
+            });
+        }
+
+        if (actionBtn) {
+            actionBtn.addEventListener('click', () => {
+                const format = formatSelect ? formatSelect.value : 'txt';
+                if (format === 'txt') {
+                    // Existing txt download logic
+                    refreshExportText();
+                    const text = output.value;
+                    if (!text) {
+                        return;
+                    }
+                    const blob = new Blob([text + '\n'], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'pattern.txt';
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    URL.revokeObjectURL(url);
+                } else {
+                    callExportAPI(format);
+                }
             });
         }
     }
