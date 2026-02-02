@@ -104,7 +104,7 @@ function trackerTableSvg() {
 
             if (data.header) {
                 // column header. A number
-                let text = c + 1;
+                let text = c;
                 str += `
                 <text 
                     

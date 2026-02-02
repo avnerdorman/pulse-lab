@@ -179,7 +179,7 @@ function NecklaceView() {
                 const labelRadius = radius + 20;
                 const labelX = centerX + Math.cos(angle) * labelRadius;
                 const labelY = centerY + Math.sin(angle) * labelRadius;
-                ctx.fillText(String(i + 1), labelX, labelY);
+                ctx.fillText(String(i), labelX, labelY);
             }
         }
 

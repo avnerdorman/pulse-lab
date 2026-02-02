@@ -2134,7 +2134,7 @@ function trackerTable() {
         for (let c = 0; c < numRows; c++) {
             str += `<td class="${cssClass}" data-row-id="${rowID}" data-col-id="${c}">`;
             if (data.header) {
-                str += c + 1;
+                str += c;
             }
             str += `</td>`;
         }
