@@ -261,9 +261,9 @@
             midiBtn.classList.add('loading');
         }
         // if (musicxmlBtn) {
-            musicxmlBtn.disabled = true;
-            musicxmlBtn.classList.add('loading');
-        }
+        //     musicxmlBtn.disabled = true;
+        //     musicxmlBtn.classList.add('loading');
+        // }
         if (statusEl) {
             statusEl.textContent = `Exporting ${format.toUpperCase()}...`;
             statusEl.className = 'export-status';
@@ -312,10 +312,10 @@
                 midiBtn.disabled = false;
                 midiBtn.classList.remove('loading');
             }
-            if (musicxmlBtn) {
-                musicxmlBtn.disabled = false;
-                musicxmlBtn.classList.remove('loading');
-            }
+            // if (musicxmlBtn) {
+            //     musicxmlBtn.disabled = false;
+            //     musicxmlBtn.classList.remove('loading');
+            // }
         }
     }
 
