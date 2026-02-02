@@ -252,7 +252,7 @@
         };
 
         const midiBtn = document.getElementById('export-midi-btn');
-        const musicxmlBtn = document.getElementById('export-musicxml-btn');
+        // const musicxmlBtn = document.getElementById('export-musicxml-btn');
         const statusEl = document.getElementById('export-status');
 
         // Disable both export buttons during request
@@ -260,7 +260,7 @@
             midiBtn.disabled = true;
             midiBtn.classList.add('loading');
         }
-        if (musicxmlBtn) {
+        // if (musicxmlBtn) {
             musicxmlBtn.disabled = true;
             musicxmlBtn.classList.add('loading');
         }
